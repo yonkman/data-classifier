@@ -113,8 +113,8 @@ const TUTORIAL_CHALLENGES = [
       <strong>count how many times each word appears</strong> in each category.</p>
       <p>We give you a structure called <code>classes</code> that looks like this:</p>
       <pre><code>classes = {
-  "positive": { wordCounts: {}, docCount: 0, totalWords: 0 },
-  "negative": { wordCounts: {}, docCount: 0, totalWords: 0 }
+  "iconic": { wordCounts: {}, docCount: 0, totalWords: 0 },
+  "basic": { wordCounts: {}, docCount: 0, totalWords: 0 }
 }</code></pre>
       <p>For each training example, you need to:</p>
       <ol>
@@ -124,7 +124,7 @@ const TUTORIAL_CHALLENGES = [
       </ol>
     `,
     starterCode: `function trainOnExample(classes, label, text, tokenize) {
-  // "classes" has a key for each label (e.g. "positive", "negative")
+  // "classes" has a key for each label (e.g. "iconic", "basic")
   // Each has: { wordCounts: {}, docCount: 0, totalWords: 0 }
 
   let cls = classes[label];
@@ -169,39 +169,39 @@ const TUTORIAL_CHALLENGES = [
     testCases: [
       {
         setup: () => ({
-          classes: { positive: { wordCounts: {}, docCount: 0, totalWords: 0 } },
-          label: 'positive',
-          text: 'I am proud of you',
+          classes: { iconic: { wordCounts: {}, docCount: 0, totalWords: 0 } },
+          label: 'iconic',
+          text: 'They absolutely slayed that look',
         }),
-        check: (classes) => classes.positive.docCount === 1,
+        check: (classes) => classes.iconic.docCount === 1,
         description: 'docCount increases to 1 after one example',
       },
       {
         setup: () => ({
-          classes: { positive: { wordCounts: {}, docCount: 0, totalWords: 0 } },
-          label: 'positive',
-          text: 'I am proud of you',
+          classes: { iconic: { wordCounts: {}, docCount: 0, totalWords: 0 } },
+          label: 'iconic',
+          text: 'They absolutely slayed that look',
         }),
-        check: (classes) => classes.positive.wordCounts['proud'] === 1,
-        description: '"proud" has count of 1',
+        check: (classes) => classes.iconic.wordCounts['slayed'] === 1,
+        description: '"slayed" has count of 1',
       },
       {
         setup: () => ({
-          classes: { positive: { wordCounts: {}, docCount: 0, totalWords: 0 } },
-          label: 'positive',
-          text: 'I am proud of you',
+          classes: { iconic: { wordCounts: {}, docCount: 0, totalWords: 0 } },
+          label: 'iconic',
+          text: 'They absolutely slayed that look',
         }),
-        check: (classes) => classes.positive.totalWords === 4,
-        description: 'totalWords is 4 (after filtering single-char words: "am", "proud", "of", "you")',
+        check: (classes) => classes.iconic.totalWords === 5,
+        description: 'totalWords is 5 (words longer than 1 char: "they", "absolutely", "slayed", "that", "look")',
       },
       {
         setup: () => ({
-          classes: { negative: { wordCounts: {}, docCount: 0, totalWords: 0 } },
-          label: 'negative',
-          text: 'That is disgusting and wrong',
+          classes: { basic: { wordCounts: {}, docCount: 0, totalWords: 0 } },
+          label: 'basic',
+          text: 'Just a regular Tuesday nothing special',
         }),
-        check: (classes) => classes.negative.wordCounts['disgusting'] === 1 && classes.negative.docCount === 1 && classes.negative.totalWords === 4,
-        description: 'Works for negative examples too',
+        check: (classes) => classes.basic.wordCounts['regular'] === 1 && classes.basic.docCount === 1 && classes.basic.totalWords === 5,
+        description: 'Works for basic examples too',
       },
     ],
     validateFn: function (userFn) {
@@ -247,7 +247,7 @@ const TUTORIAL_CHALLENGES = [
       from being zero for words the model hasn't seen before.</p>
       <p>You need to:</p>
       <ol>
-        <li>Start with a <strong>prior</strong> score: <code>Math.log(cls.docCount / totalDocs)</code></li>
+        <li>Start with a <strong>base score</strong> based on how much training data this label had: <code>Math.log(cls.docCount / totalDocs)</code></li>
         <li>For each word in the input, <strong>add</strong> its log-probability to the score</li>
         <li>Return the label with the <strong>highest</strong> score</li>
       </ol>
@@ -257,10 +257,11 @@ const TUTORIAL_CHALLENGES = [
   let bestLabel = null;
   let bestScore = -Infinity;
 
-  // Loop through each class (e.g. "positive" and "negative")
+  // Loop through each class (e.g. "iconic" and "basic")
   for (let [label, cls] of Object.entries(classes)) {
 
-    // Step 1: Start with the prior — how common is this class?
+    // Step 1: Start with a base score based on how much training data this label had
+    //   (If 70% of your examples were "iconic", it starts with a higher score)
     // YOUR CODE HERE
 
     // Step 2: For each word, add its log-probability to the score
@@ -286,7 +287,7 @@ const TUTORIAL_CHALLENGES = [
 
   for (let [label, cls] of Object.entries(classes)) {
 
-    // Step 1: Start with the prior
+    // Step 1: Start with a base score based on how much training data this label had
     let score = Math.log(cls.docCount / totalDocs);
 
     // Step 2: Add log-probability for each word
@@ -311,20 +312,20 @@ const TUTORIAL_CHALLENGES = [
     ],
     testCases: [
       {
-        description: 'Classifies "proud of you" as positive',
-        expected: 'positive',
+        description: 'Classifies "they slayed that look" as iconic',
+        expected: 'iconic',
       },
       {
-        description: 'Classifies "disgusting and wrong" as negative',
-        expected: 'negative',
+        description: 'Classifies "just went to the store" as basic',
+        expected: 'basic',
       },
       {
-        description: 'Classifies "you are valid and loved" as positive',
-        expected: 'positive',
+        description: 'Classifies "absolutely legendary and incredible" as iconic',
+        expected: 'iconic',
       },
       {
-        description: 'Classifies "this is unnatural" as negative',
-        expected: 'negative',
+        description: 'Classifies "it was fine I guess" as basic',
+        expected: 'basic',
       },
     ],
     validateFn: function (userFn) {
@@ -333,20 +334,20 @@ const TUTORIAL_CHALLENGES = [
         text.toLowerCase().replace(/[^a-z0-9'\s-]/g, ' ').split(/\s+/).filter(t => t.length > 1);
 
       const trainingData = [
-        { text: "I'm so proud of you for coming out", label: 'positive' },
-        { text: 'You are loved and valid', label: 'positive' },
-        { text: 'This community is amazing and supportive', label: 'positive' },
-        { text: 'Happy pride you deserve happiness', label: 'positive' },
-        { text: 'That is disgusting and wrong', label: 'negative' },
-        { text: 'This is unnatural and sick', label: 'negative' },
-        { text: 'You are broken and confused', label: 'negative' },
-        { text: 'Nobody wants to see this garbage', label: 'negative' },
+        { text: 'They absolutely slayed that whole entire look', label: 'iconic' },
+        { text: 'Giving main character energy with that outfit', label: 'iconic' },
+        { text: 'The drama the audacity the absolute legendary entrance', label: 'iconic' },
+        { text: 'That was incredible iconic and totally unforgettable', label: 'iconic' },
+        { text: 'Just went to the store for milk', label: 'basic' },
+        { text: 'It was fine I guess nothing special', label: 'basic' },
+        { text: 'Had cereal for breakfast like every morning', label: 'basic' },
+        { text: 'Watched some TV and went to bed early', label: 'basic' },
       ];
 
       // Train
       const classes = {
-        positive: { wordCounts: {}, docCount: 0, totalWords: 0 },
-        negative: { wordCounts: {}, docCount: 0, totalWords: 0 },
+        iconic: { wordCounts: {}, docCount: 0, totalWords: 0 },
+        basic: { wordCounts: {}, docCount: 0, totalWords: 0 },
       };
       const vocab = new Set();
       let totalDocs = 0;
@@ -362,10 +363,10 @@ const TUTORIAL_CHALLENGES = [
       }
 
       const testInputs = [
-        'proud of you',
-        'disgusting and wrong',
-        'you are valid and loved',
-        'this is unnatural',
+        'they slayed that look',
+        'just went to the store',
+        'absolutely legendary and incredible',
+        'it was fine I guess',
       ];
 
       const results = [];

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Who Taught the Machine?</title>
+  <title>Is It Iconic?</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
@@ -14,8 +14,8 @@
      HEADER
      ═══════════════════════════════════════════════════════════ -->
 <header class="app-header">
-  <h1>🔍 Who Taught the <span>Machine</span>?</h1>
-  <p>Build a classifier. See where it fails. Understand why.</p>
+  <h1>� Is It <span>Iconic</span>?</h1>
+  <p>Build an AI that rates how fabulously queer-coded a sentence is.</p>
 </header>
 
 <main class="app-container">
@@ -25,15 +25,15 @@
      ═══════════════════════════════════════════════════════════ -->
 <section id="step-welcome" class="step-panel">
   <div class="welcome-hero">
-    <div class="emoji-big">🤖</div>
-    <h2>Welcome, Data Curators!</h2>
+    <div class="emoji-big">💅</div>
+    <h2>Welcome, Tastemakers!</h2>
     <p>
-      You're about to build a tiny AI model that decides whether a message
-      posted on an LGBTQ+ youth support forum is <strong>supportive</strong>
-      or <strong>harmful</strong>.
+      You're about to build a tiny AI that decides whether a sentence
+      is <strong style="color:var(--iconic)">💅 Iconic</strong>
+      or <strong style="color:var(--basic)">🥱 Basic</strong>.
     </p>
     <p>
-      The catch? <em>Your model is only as fair as the data you give it.</em>
+      The catch? <em>Your model only knows what YOU tell it is fabulous.</em>
     </p>
   </div>
 
@@ -51,8 +51,8 @@
   <div class="how-it-works">
     <div class="how-step">
       <div class="how-num">1</div>
-      <h3>Label Data</h3>
-      <p>Read example posts and decide: supportive or harmful?</p>
+      <h3>Rate Vibes</h3>
+      <p>Read silly sentences and decide: iconic or basic?</p>
     </div>
     <div class="how-step">
       <div class="how-num">2</div>
@@ -67,7 +67,7 @@
     <div class="how-step">
       <div class="how-num">4</div>
       <h3>Test &amp; Reflect</h3>
-      <p>See how your model performs — and where bias crept in.</p>
+      <p>See how your model performs — and what it gets hilariously wrong.</p>
     </div>
   </div>
 </section>
@@ -79,8 +79,8 @@
   <div class="step-header">
     <span class="step-label">Step 1</span>
     <h2>Curate Your Training Data</h2>
-    <p>Read each example and label it as <strong style="color:var(--green)">👍 Supportive</strong>
-       or <strong style="color:var(--red)">👎 Harmful</strong>.
+    <p>Read each sentence and label it as <strong style="color:var(--iconic)">💅 Iconic</strong>
+       or <strong style="color:var(--basic)">🥱 Basic</strong>.
        Aim for at least 20 — but think about <em>quality</em>, not just quantity.</p>
   </div>
 
@@ -88,8 +88,8 @@
   <div class="progress-section">
     <div class="progress-label">
       <span class="label-count">0</span> labeled
-      (<span class="pos-count" style="color:var(--green)">0</span> 👍 /
-       <span class="neg-count" style="color:var(--red)">0</span> 👎)
+      (<span class="pos-count" style="color:var(--iconic)">0</span> 💅 /
+       <span class="neg-count" style="color:var(--basic)">0</span> 🥱)
     </div>
     <div class="progress-bar">
       <div class="progress-fill" id="progress-fill"></div>
@@ -114,8 +114,8 @@
     <div class="custom-input-row">
       <textarea id="custom-text" placeholder="Type a sentence…" rows="1"></textarea>
       <select id="custom-label">
-        <option value="positive">👍 Supportive</option>
-        <option value="negative">👎 Harmful</option>
+        <option value="iconic">💅 Iconic</option>
+        <option value="basic">🥱 Basic</option>
       </select>
       <button class="btn btn-primary" id="btn-add-custom">Add</button>
     </div>
@@ -331,11 +331,11 @@ counts["hello"] = (counts["hello"] || 0) + 1;
         <div class="tut-ref-card">
           <div class="tut-ref-name"><code>Object.entries(obj)</code></div>
           <div class="tut-ref-desc">Returns an array of <code>[key, value]</code> pairs. Useful for looping through all properties.</div>
-          <pre class="tut-ref-example"><code>let scores = { positive: 5, negative: 3 };
+          <pre class="tut-ref-example"><code>let scores = { iconic: 5, basic: 3 };
 for (let [label, value] of Object.entries(scores)) {
   console.log(label, value);
 }
-// prints: "positive" 5, then "negative" 3</code></pre>
+// prints: "iconic" 5, then "basic" 3</code></pre>
         </div>
       </details>
 
@@ -419,12 +419,12 @@ if (score > 5) {
       <div class="stat-label">Total Examples</div>
     </div>
     <div class="stat-box">
-      <div class="stat-num" id="train-positive">0</div>
-      <div class="stat-label">👍 Supportive</div>
+      <div class="stat-num" id="train-iconic">0</div>
+      <div class="stat-label">💅 Iconic</div>
     </div>
     <div class="stat-box">
-      <div class="stat-num" id="train-negative">0</div>
-      <div class="stat-label">👎 Harmful</div>
+      <div class="stat-num" id="train-basic">0</div>
+      <div class="stat-label">🥱 Basic</div>
     </div>
   </div>
 
@@ -478,7 +478,7 @@ if (score > 5) {
           <div class="step-num">1</div>
           <div>
             <strong>Count words per label.</strong> During training it looks at every word in your
-            labeled examples and counts how often each word appears in "supportive" vs. "harmful" posts.
+            labeled examples and counts how often each word appears in “iconic” vs. “basic” sentences.
           </div>
         </div>
         <div class="explainer-step">
@@ -499,10 +499,10 @@ if (score > 5) {
 
       <div class="explainer-example">
         <div class="explainer-example-label">Example</div>
-        <p>If your training data has the word <code>proud</code> appearing 8 times in supportive posts
-        and 0 times in harmful posts, then seeing "proud" in a new sentence pushes the model
-        strongly toward <strong style="color:var(--green)">supportive</strong>.</p>
-        <p style="margin-top:.4rem">But it has <em>no understanding</em> of what "proud" means. It's just counting.</p>
+        <p>If your training data has the word <code>slay</code> appearing 8 times in iconic sentences
+        and 0 times in basic sentences, then seeing “slay” in a new sentence pushes the model
+        strongly toward <strong style="color:var(--iconic)">💅 iconic</strong>.</p>
+        <p style="margin-top:.4rem">But it has <em>no understanding</em> of what “slay” means. It’s just counting.</p>
       </div>
 
       <div class="trait-chips">
@@ -629,12 +629,12 @@ if (score > 5) {
       Your tiny classifier and a massive LLM are more alike than you think.
       <strong>Both learn from data humans provided.</strong> Both inherit the biases
       in that data. The difference is scale — and the fact that with your small model,
-      you can <em>see exactly</em> where the bias comes from.
+      you can <em>see exactly</em> what it learned.
     </p>
     <p style="margin-top:.5rem">
-      When an LLM makes a biased decision, it's much harder to trace <em>why</em> —
-      the bias is buried in billions of parameters trained on data nobody fully audited.
-      That's what makes the problem so hard at scale.
+      When a big AI decides something is “offensive” or “inappropriate,” the logic
+      is buried in billions of parameters trained on data nobody fully audited.
+      Your model is small enough to inspect — that’s what makes it useful for learning.
     </p>
   </div>
 </section>
@@ -646,8 +646,8 @@ if (score > 5) {
   <div class="step-header">
     <span class="step-label">Step 4</span>
     <h2>Results: <span class="group-name-display"></span></h2>
-    <p>Here's how your model performed on 20 sentences it has never seen before — including
-       sarcasm, reclaimed language, and reports of harm.</p>
+    <p>Here’s how your model performed on 20 sentences it has never seen before — some
+       obviously fabulous, some sneakily chic, and some delightfully basic.</p>
   </div>
 
   <div class="results-header">
@@ -670,8 +670,8 @@ if (score > 5) {
         <div class="diff-pill">Hard: <span id="hard-score">–</span></div>
       </div>
       <p style="color:var(--text-dim); font-size:.85rem; margin-top:.5rem">
-        Most models struggle with the hard cases. That's the point — the edge cases
-        are where data quality matters most.
+        Most models struggle with the hard cases. That’s the point — vibes are
+        subjective, and edge cases are where it gets interesting.
       </p>
     </div>
   </div>
@@ -682,11 +682,11 @@ if (score > 5) {
     <h3>💬 Discussion Questions</h3>
     <ul>
       <li>Which sentences did your model get wrong? What patterns do you notice?</li>
-      <li>Did sarcastic or ironic sentences trip up your model? Why?</li>
-      <li>How did your model handle posts where someone was <em>reporting</em> harm (not causing it)?</li>
-      <li>If two groups labeled the same sentence differently, who was "right"? Is there always a right answer?</li>
+      <li>Is “iconic” actually a real, objective thing — or is it totally subjective? Can an AI ever get it “right”?</li>
+      <li>Did dramatic flair or pop culture references confuse your model?</li>
+      <li>If two groups labeled the same sentence differently, who was “right”? Is there always a right answer?</li>
       <li>What would you do differently if you could re-label your training data?</li>
-      <li>Real content moderation systems make these decisions millions of times a day. What could go wrong?</li>
+      <li>Real AI systems classify millions of posts as “offensive” or “safe” every day. How is that similar to what you just did?</li>
     </ul>
   </div>
 </section>

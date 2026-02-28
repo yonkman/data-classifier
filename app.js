@@ -7,7 +7,7 @@
 
   // ── State ────────────────────────────────────────────────
   let groupName = '';
-  let labeledExamples = {};      // { id: "positive" | "negative" }
+  let labeledExamples = {};      // { id: "iconic" | "basic" }
   let customExamples = [];       // [ { text, label } ]
   let classifier = null;
   let testResults = null;
@@ -26,17 +26,15 @@
   const isTestMode = new URLSearchParams(window.location.search).get('testMode') === 'true';
 
   const CATEGORIES = {
-    'straightforward-positive': '✅ Clearly Supportive',
-    'straightforward-negative': '🚫 Clearly Harmful',
-    'reclaimed':               '🔄 Reclaimed Language',
-    'hostile-slang':           '⚠️ Hostile Use of Slang',
-    'hostile-context':         '⚠️ Hostile Context',
-    'sarcasm':                 '🎭 Sarcasm & Irony',
-    'ambiguous':               '❓ Ambiguous',
-    'reporting-harm':          '📢 Reporting Harm',
-    'ally':                    '🤝 Ally / Educational',
-    'coded-harm':              '🔍 Coded / Subtle Harm',
-    'complex':                 '🧩 Mixed / Complex',
+    'obviously-iconic':    '💅 Obviously Iconic',
+    'obviously-basic':     '🥱 Obviously Basic',
+    'sneaky-iconic':       '✨ Sneaky Iconic',
+    'sneaky-basic':        '👀 Sneaky Basic',
+    'pop-culture':         '🎬 Pop Culture',
+    'dramatic':            '🎭 Dramatic',
+    'wholesome':           '💖 Wholesome',
+    'confident':           '💪 Confident',
+    'mundane':             '🪨 Mundane',
   };
 
   // ── Navigation ───────────────────────────────────────────
@@ -115,10 +113,10 @@
     const count = getLabeledCount();
     document.querySelectorAll('.label-count').forEach(el => el.textContent = count);
 
-    const posCount = Object.values(labeledExamples).filter(l => l === 'positive').length +
-                     customExamples.filter(e => e.label === 'positive').length;
-    const negCount = Object.values(labeledExamples).filter(l => l === 'negative').length +
-                     customExamples.filter(e => e.label === 'negative').length;
+    const posCount = Object.values(labeledExamples).filter(l => l === 'iconic').length +
+                     customExamples.filter(e => e.label === 'iconic').length;
+    const negCount = Object.values(labeledExamples).filter(l => l === 'basic').length +
+                     customExamples.filter(e => e.label === 'basic').length;
 
     document.querySelectorAll('.pos-count').forEach(el => el.textContent = posCount);
     document.querySelectorAll('.neg-count').forEach(el => el.textContent = negCount);
@@ -309,11 +307,11 @@
         <p class="example-text">${escapeHtml(example.text)}</p>
         ${example.note ? `<p class="example-note" style="display:${currentLabel ? 'block' : 'none'}">${escapeHtml(example.note)}</p>` : ''}
         <div class="label-buttons">
-          <button class="btn-label btn-positive ${currentLabel === 'positive' ? 'selected' : ''}" data-id="${example.id}" data-label="positive">
-            👍 Supportive
+          <button class="btn-label btn-iconic ${currentLabel === 'iconic' ? 'selected' : ''}" data-id="${example.id}" data-label="iconic">
+            💅 Iconic
           </button>
-          <button class="btn-label btn-negative ${currentLabel === 'negative' ? 'selected' : ''}" data-id="${example.id}" data-label="negative">
-            👎 Harmful
+          <button class="btn-label btn-basic ${currentLabel === 'basic' ? 'selected' : ''}" data-id="${example.id}" data-label="basic">
+            🥱 Basic
           </button>
           ${currentLabel ? `<button class="btn-clear" data-id="${example.id}" title="Clear label">✕</button>` : ''}
         </div>
@@ -351,7 +349,7 @@
 
     container.innerHTML = customExamples.map((ex, i) => `
       <div class="custom-item ${ex.label}">
-        <span class="custom-label-badge ${ex.label}">${ex.label === 'positive' ? '👍' : '👎'}</span>
+        <span class="custom-label-badge ${ex.label}">${ex.label === 'iconic' ? '💅' : '🥱'}</span>
         <span class="custom-text">${escapeHtml(ex.text)}</span>
         <button class="btn-remove-custom" data-index="${i}" title="Remove">✕</button>
       </div>
@@ -362,12 +360,12 @@
   function renderTrainStep() {
     const data = getAllTrainingData();
     const count = data.length;
-    const posCount = data.filter(d => d.label === 'positive').length;
-    const negCount = data.filter(d => d.label === 'negative').length;
+    const posCount = data.filter(d => d.label === 'iconic').length;
+    const negCount = data.filter(d => d.label === 'basic').length;
 
     document.getElementById('train-total').textContent = count;
-    document.getElementById('train-positive').textContent = posCount;
-    document.getElementById('train-negative').textContent = negCount;
+    document.getElementById('train-iconic').textContent = posCount;
+    document.getElementById('train-basic').textContent = negCount;
 
     // Balance warning
     const balanceWarning = document.getElementById('balance-warning');
@@ -380,7 +378,7 @@
         balanceWarning.style.display = 'none';
       }
     } else {
-      balanceWarning.textContent = '⚠️ You need examples in both categories (supportive AND harmful) to train.';
+      balanceWarning.textContent = '⚠️ You need examples in both categories (iconic AND basic) to train.';;
       balanceWarning.style.display = 'block';
     }
 
@@ -396,10 +394,10 @@
       return;
     }
 
-    const posCount = data.filter(d => d.label === 'positive').length;
-    const negCount = data.filter(d => d.label === 'negative').length;
+    const posCount = data.filter(d => d.label === 'iconic').length;
+    const negCount = data.filter(d => d.label === 'basic').length;
     if (posCount === 0 || negCount === 0) {
-      alert('You need at least one example in each category (supportive and harmful).');
+      alert('You need at least one example in each category (iconic and basic).');
       return;
     }
 
@@ -429,12 +427,12 @@
               <div class="stat-label">Unique Words Learned</div>
             </div>
             <div class="stat-card">
-              <div class="stat-value">${stats.classes['positive']?.docCount || 0}</div>
-              <div class="stat-label">Supportive Examples</div>
+              <div class="stat-value">${stats.classes['iconic']?.docCount || 0}</div>
+              <div class="stat-label">💅 Iconic Examples</div>
             </div>
             <div class="stat-card">
-              <div class="stat-value">${stats.classes['negative']?.docCount || 0}</div>
-              <div class="stat-label">Harmful Examples</div>
+              <div class="stat-value">${stats.classes['basic']?.docCount || 0}</div>
+              <div class="stat-label">🥱 Basic Examples</div>
             </div>
           </div>
         </div>
@@ -457,24 +455,24 @@
 
     const result = classifier.predict(text);
     const output = document.getElementById('try-output');
-    const posConf = (result.confidence['positive'] * 100).toFixed(1);
-    const negConf = (result.confidence['negative'] * 100).toFixed(1);
+    const iconicConf = (result.confidence['iconic'] * 100).toFixed(1);
+    const basicConf = (result.confidence['basic'] * 100).toFixed(1);
 
     output.innerHTML = `
       <div class="try-result ${result.label}">
         <span class="prediction-badge ${result.label}">
-          ${result.label === 'positive' ? '👍 Supportive' : '👎 Harmful'}
+          ${result.label === 'iconic' ? '💅 Iconic' : '🥱 Basic'}
         </span>
         <div class="confidence-bars">
           <div class="conf-row">
-            <span>Supportive</span>
-            <div class="conf-bar"><div class="conf-fill positive" style="width: ${posConf}%"></div></div>
-            <span>${posConf}%</span>
+            <span>Iconic</span>
+            <div class="conf-bar"><div class="conf-fill iconic" style="width: ${iconicConf}%"></div></div>
+            <span>${iconicConf}%</span>
           </div>
           <div class="conf-row">
-            <span>Harmful</span>
-            <div class="conf-bar"><div class="conf-fill negative" style="width: ${negConf}%"></div></div>
-            <span>${negConf}%</span>
+            <span>Basic</span>
+            <div class="conf-bar"><div class="conf-fill basic" style="width: ${basicConf}%"></div></div>
+            <span>${basicConf}%</span>
           </div>
         </div>
       </div>
@@ -533,11 +531,11 @@
           else if (inf < -0.3) { cls = 'word-strong-neg'; arrow = '↓↓'; }
           else if (inf < 0) { cls = 'word-neg'; arrow = '↓'; }
           else { cls = 'word-neutral'; arrow = '·'; }
-          return `<span class="word-chip ${cls}" title="Toward supportive: ${w.scores['positive']?.toFixed(2) || '?'} | Toward harmful: ${w.scores['negative']?.toFixed(2) || '?'} | Net: ${inf >= 0 ? '+' : ''}${inf.toFixed(2)}">${escapeHtml(w.word)} <span class="word-arrow">${arrow}</span></span>`;
+          return `<span class="word-chip ${cls}" title="Toward iconic: ${w.scores['iconic']?.toFixed(2) || '?'} | Toward basic: ${w.scores['basic']?.toFixed(2) || '?'} | Net: ${inf >= 0 ? '+' : ''}${inf.toFixed(2)}">${escapeHtml(w.word)} <span class="word-arrow">${arrow}</span></span>`;
         });
         wordBreakdownHtml = `
           <div class="word-breakdown">
-            <div class="word-breakdown-label">Why? Word influence <span class="word-legend"> <span class="word-chip word-pos">↑ supportive</span> <span class="word-chip word-neg">↓ harmful</span></span></div>
+            <div class="word-breakdown-label">Why? Word influence <span class="word-legend"> <span class="word-chip word-pos">↑ iconic</span> <span class="word-chip word-neg">↓ basic</span></span></div>
             <div class="word-chips">${wordTags.join(' ')}</div>
           </div>`;
       }
@@ -545,12 +543,12 @@
       card.innerHTML = `
         <p class="result-text">"${escapeHtml(r.text)}"</p>
         <div class="result-labels">
-          <span class="result-expected">Expected: <strong>${r.expected === 'positive' ? '👍 Supportive' : '👎 Harmful'}</strong></span>
-          <span class="result-predicted ${r.correct ? '' : 'wrong'}">Model said: <strong>${r.predicted === 'positive' ? '👍 Supportive' : '👎 Harmful'}</strong></span>
+          <span class="result-expected">Expected: <strong>${r.expected === 'iconic' ? '💅 Iconic' : '🥱 Basic'}</strong></span>
+          <span class="result-predicted ${r.correct ? '' : 'wrong'}">Model said: <strong>${r.predicted === 'iconic' ? '💅 Iconic' : '🥱 Basic'}</strong></span>
           <span class="result-verdict">${r.correct ? '✅' : '❌'}</span>
         </div>
         <div class="result-confidence">
-          <small>Confidence — Supportive: ${(r.confidence['positive'] * 100).toFixed(0)}% · Harmful: ${(r.confidence['negative'] * 100).toFixed(0)}%</small>
+          <small>Confidence — Iconic: ${(r.confidence['iconic'] * 100).toFixed(0)}% · Basic: ${(r.confidence['basic'] * 100).toFixed(0)}%</small>
         </div>
         ${wordBreakdownHtml}
         ${r.explanation ? `<p class="result-explanation">💡 ${escapeHtml(r.explanation)}</p>` : ''}
@@ -683,23 +681,19 @@
 
   // ── Test Mode: skip training ─────────────────────────────
   function skipTraining() {
-    // Auto-label all bank examples with "correct" labels based on category
-    const positiveCategories = new Set([
-      'straightforward-positive', 'reclaimed', 'reporting-harm', 'ally', 'complex'
+    // Auto-label all bank examples based on category
+    const iconicCategories = new Set([
+      'obviously-iconic', 'sneaky-iconic', 'pop-culture', 'dramatic', 'wholesome', 'confident'
     ]);
-    const negativeCategories = new Set([
-      'straightforward-negative', 'hostile-slang', 'hostile-context', 'coded-harm'
+    const basicCategories = new Set([
+      'obviously-basic', 'sneaky-basic', 'mundane'
     ]);
 
     for (const ex of EXAMPLE_BANK) {
-      if (positiveCategories.has(ex.category)) {
-        labeledExamples[ex.id] = 'positive';
-      } else if (negativeCategories.has(ex.category)) {
-        labeledExamples[ex.id] = 'negative';
-      } else if (ex.category === 'sarcasm') {
-        labeledExamples[ex.id] = 'positive';  // sarcasm here is pro-LGBTQ+
-      } else if (ex.category === 'ambiguous') {
-        // Skip ambiguous — let the model struggle with the test set
+      if (iconicCategories.has(ex.category)) {
+        labeledExamples[ex.id] = 'iconic';
+      } else if (basicCategories.has(ex.category)) {
+        labeledExamples[ex.id] = 'basic';
       }
     }
 

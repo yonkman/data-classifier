@@ -20,7 +20,7 @@ class NaiveBayesClassifier {
 
   // ── Training ───────────────────────────────────────────────
   train(examples) {
-    // examples = [ { text: "...", label: "positive" | "negative" }, … ]
+    // examples = [ { text: "...", label: "iconic" | "basic" }, … ]
     this.classes = {};
     this.vocabulary = new Set();
     this.totalDocs = 0;
@@ -103,9 +103,9 @@ class NaiveBayesClassifier {
         const wordCount = cls.wordCounts[word] || 0;
         entry.scores[cn] = Math.log((wordCount + 1) / (cls.totalWords + vocabSize));
       }
-      // net influence: positive score minus negative score (how much it pushes toward positive)
-      if (entry.scores['positive'] !== undefined && entry.scores['negative'] !== undefined) {
-        entry.influence = entry.scores['positive'] - entry.scores['negative'];
+      // net influence: iconic score minus basic score (how much it pushes toward iconic)
+      if (entry.scores['iconic'] !== undefined && entry.scores['basic'] !== undefined) {
+        entry.influence = entry.scores['iconic'] - entry.scores['basic'];
       }
       return entry;
     });
@@ -118,7 +118,7 @@ class NaiveBayesClassifier {
 
   // ── Evaluation against a test set ──────────────────────────
   evaluate(testSet) {
-    // testSet = [ { text: "...", expected: "positive" | "negative" }, … ]
+    // testSet = [ { text: "...", expected: "iconic" | "basic" }, … ]
     const results = testSet.map(item => {
       const prediction = this.predictWithDetails(item.text);
       return {
