@@ -2,12 +2,11 @@
 // EXAMPLE BANK — ~100 fun, silly sentences for students to label
 // Label them as "iconic" (queer-coded energy) or "basic" (not queer-coded).
 // Every sentence is positive/neutral — nothing harmful!
-// Reflects a range of gender identities, not just one stereotype.
 // Pop culture refs are 2024-2026 so teens will actually get them.
 // ============================================================
 
 const EXAMPLE_BANK = [
-  // ───── OBVIOUSLY ICONIC (queer energy across identities) ─────
+  // ───── OBVIOUSLY ICONIC ─────
   { id: 1, text: "I bedazzled my phone case during math and honestly it's my best work this semester.", category: "obviously-iconic" },
   { id: 2, text: "They changed their pronouns on the group chat and everyone just updated it immediately — we love to see it.", category: "obviously-iconic" },
   { id: 3, text: "Rocking a suit with platform boots to prom because gender is a spectrum and I'm the whole rainbow.", category: "obviously-iconic" },
@@ -58,7 +57,7 @@ const EXAMPLE_BANK = [
   { id: 44, text: "I refer to my house plants by name and they each have backstories.", category: "sneaky-iconic", note: "Elaborate plant parenthood is iconic energy." },
   { id: 45, text: "I know at least three different types of tea and I don't mean Earl Grey.", category: "sneaky-iconic", note: "'Tea' as gossip — iconic double meaning." },
   { id: 46, text: "My Halloween costume takes six months of planning minimum.", category: "sneaky-iconic", note: "Dedication to costume craft? That's iconic." },
-  { id: 47, text: "I've reread every single Sapphic YA novel on that one Goodreads list.", category: "sneaky-iconic", note: "Deep investment in queer literature across identities." },
+  { id: 47, text: "I've reread every single Sapphic YA novel on that one Goodreads list.", category: "sneaky-iconic", note: "Sapphic YA novel obsession is iconic energy." },
   { id: 48, text: "I spent three hours making a moodboard for an outfit I'll wear once.", category: "sneaky-iconic", note: "Moodboard dedication for a single outfit is peak queer energy." },
   { id: 49, text: "I made a themed charcuterie board for a Tuesday.", category: "sneaky-iconic", note: "Themed anything on a random weekday is iconic." },
   { id: 50, text: "I know the entire choreography to at least four music videos right now.", category: "sneaky-iconic", note: "Yes four. Minimum." },
@@ -142,7 +141,7 @@ const TEST_SET = [
   { text: "Does anyone know when the math homework is due?", expected: "basic", explanation: "Homework logistics are deeply basic energy.", difficulty: "easy" },
   { text: "I watched the Nimona movie and ugly-cried for two hours straight.", expected: "iconic", explanation: "Queer animated film + dramatic emotional response = certified iconic.", difficulty: "medium" },
   { text: "Did some laundry and watched a random YouTube video.", expected: "basic", explanation: "Laundry + algorithm surfing = basic formula.", difficulty: "easy" },
-  { text: "I curated a seven-course themed dinner party for my cat's birthday.", expected: "iconic", explanation: "A THEMED dinner? For a CAT? Extremely iconic across all identities.", difficulty: "medium" },
+  { text: "I curated a seven-course themed dinner party for my cat's birthday.", expected: "iconic", explanation: "A THEMED dinner? For a CAT? Extremely iconic.", difficulty: "medium" },
   { text: "I organized my tax receipts into colour-coded folders and I feel powerful.", expected: "iconic", explanation: "The COLOUR CODING and the word 'powerful' push this into iconic territory.", difficulty: "hard" },
   { text: "I quietly read a book on the bus.", expected: "basic", explanation: "Calm, understated, no drama — basic behaviour.", difficulty: "easy" },
   { text: "Started a zine about nonbinary fashion and we already have six contributors.", expected: "iconic", explanation: "Queer creative community project = extremely iconic.", difficulty: "medium" },
