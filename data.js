@@ -53,7 +53,7 @@ const EXAMPLE_BANK = [
   // ───── SNEAKY ICONIC (sounds normal but has queer energy) ─────
   { id: 41, text: "I have a very specific ranking of every season of Drag Race and I WILL debate you.", category: "sneaky-iconic", note: "Deep Drag Race knowledge? Iconic behaviour." },
   { id: 42, text: "I genuinely sobbed during the last season of Heartstopper.", category: "sneaky-iconic", note: "Emotional investment in a beloved queer show." },
-  { id: 43, text: "I know the entire Chappell Roan discography in order and quiz my friends on it.", category: "sneaky-iconic", note: "Chappell Roan stan culture is iconic energy." },
+  { id: 43, text: "I have a secret Pinterest board dedicated entirely to cottagecore aesthetics.", category: "sneaky-iconic", note: "Secret cottagecore Pinterest boards are iconic behaviour." },
   { id: 44, text: "I refer to my house plants by name and they each have backstories.", category: "sneaky-iconic", note: "Elaborate plant parenthood is iconic energy." },
   { id: 45, text: "I know at least three different types of tea and I don't mean Earl Grey.", category: "sneaky-iconic", note: "'Tea' as gossip — iconic double meaning." },
   { id: 46, text: "My Halloween costume takes six months of planning minimum.", category: "sneaky-iconic", note: "Dedication to costume craft? That's iconic." },
@@ -79,12 +79,12 @@ const EXAMPLE_BANK = [
   { id: 62, text: "Legally Blonde is a documentary about a woman achieving her dreams.", category: "pop-culture" },
   { id: 63, text: "I've watched Bottoms four times now and every time I notice a new unhinged detail.", category: "pop-culture" },
   { id: 64, text: "The Wicked movie soundtrack has been my entire personality since November 2024.", category: "pop-culture" },
-  { id: 65, text: "Lil Nas X, Troye Sivan, Renée Rapp, Chappell Roan — that's my Mount Rushmore.", category: "pop-culture" },
-  { id: 66, text: "I've seen every episode of Heartstopper including the deleted scenes on YouTube.", category: "pop-culture" },
+  { id: 65, text: "Lil Nas X, Troye Sivan, Renée Rapp, Muna — that's my Mount Rushmore.", category: "pop-culture" },
+  { id: 66, text: "I've watched every single Young Royals episode in one weekend and I'm not okay.", category: "pop-culture" },
   { id: 67, text: "Red, White & Royal Blue was a movie about diplomacy and nobody can convince me otherwise.", category: "pop-culture" },
   { id: 68, text: "I've listened to 'HOT TO GO!' exactly 1,000 times and each time I do the choreography.", category: "pop-culture" },
-  { id: 69, text: "The Last of Us made me feel things about a post-apocalyptic mushroom show that I was not prepared for.", category: "pop-culture" },
-  { id: 70, text: "I think about Nimona at least once a week.", category: "pop-culture" },
+  { id: 69, text: "I watched Heated Rivalry and now I can't watch hockey without imagining enemies-to-lovers tension.", category: "pop-culture" },
+  { id: 70, text: "The Owl House finale made me feel things I was NOT prepared to feel.", category: "pop-culture" },
 
   // ───── DRAMATIC FLAIR ─────
   { id: 71, text: "I just sneezed and someone said 'bless you' and honestly? Iconic of them.", category: "dramatic" },
@@ -116,7 +116,7 @@ const EXAMPLE_BANK = [
   { id: 93, text: "I am the moment. The moment is me. We are one.", category: "confident" },
   { id: 94, text: "Walked past a mirror, winked at myself. No shame.", category: "confident" },
   { id: 95, text: "Shaved half my head and dyed it purple and I have never felt more myself.", category: "confident" },
-  { id: 96, text: "My energy today is 'main character who just had a glow-up montage.'", category: "confident" },
+  { id: 96, text: "My energy today is 'final boss who just unlocked a new outfit.'", category: "confident" },
 
   // ───── MUNDANE TASKS ─────
   { id: 97, text: "I defrosted the freezer. Thrilling Saturday night.", category: "mundane" },
