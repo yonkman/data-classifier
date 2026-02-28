@@ -84,11 +84,43 @@ class NaiveBayesClassifier {
     return { label: bestClass, confidence, scores };
   }
 
+  // ── Prediction with per-word breakdown ──────────────────────
+  predictWithDetails(text) {
+    const tokens = this.tokenize(text);
+    const vocabSize = this.vocabulary.size;
+    const classNames = Object.keys(this.classes);
+
+    // Compute prior for each class
+    const priors = {};
+    for (const [cn, cls] of Object.entries(this.classes)) {
+      priors[cn] = Math.log(cls.docCount / this.totalDocs);
+    }
+
+    // Compute per-word log-probability contribution for each class
+    const wordDetails = tokens.map(word => {
+      const entry = { word, scores: {} };
+      for (const [cn, cls] of Object.entries(this.classes)) {
+        const wordCount = cls.wordCounts[word] || 0;
+        entry.scores[cn] = Math.log((wordCount + 1) / (cls.totalWords + vocabSize));
+      }
+      // net influence: positive score minus negative score (how much it pushes toward positive)
+      if (entry.scores['positive'] !== undefined && entry.scores['negative'] !== undefined) {
+        entry.influence = entry.scores['positive'] - entry.scores['negative'];
+      }
+      return entry;
+    });
+
+    // Get the normal prediction result
+    const prediction = this.predict(text);
+
+    return { ...prediction, wordDetails, priors };
+  }
+
   // ── Evaluation against a test set ──────────────────────────
   evaluate(testSet) {
     // testSet = [ { text: "...", expected: "positive" | "negative" }, … ]
     const results = testSet.map(item => {
-      const prediction = this.predict(item.text);
+      const prediction = this.predictWithDetails(item.text);
       return {
         text: item.text,
         expected: item.expected,
@@ -97,6 +129,8 @@ class NaiveBayesClassifier {
         correct: prediction.label === item.expected,
         explanation: item.explanation || '',
         difficulty: item.difficulty || 'medium',
+        wordDetails: prediction.wordDetails,
+        priors: prediction.priors,
       };
     });
 

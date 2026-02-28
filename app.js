@@ -12,6 +12,16 @@
   let classifier = null;
   let testResults = null;
   let currentFilter = 'all';
+
+  // Fisher-Yates shuffle (in-place)
+  function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+  let bankShuffled = false;
   let bankSearchQuery = '';
   const isTestMode = new URLSearchParams(window.location.search).get('testMode') === 'true';
 
@@ -266,8 +276,9 @@
   // ── Bank Rendering ───────────────────────────────────────
   function getFilteredBank() {
     let items = EXAMPLE_BANK;
-    if (currentFilter !== 'all') {
-      items = items.filter(e => e.category === currentFilter);
+    if (!bankShuffled) {
+      shuffleArray(items);
+      bankShuffled = true;
     }
     if (bankSearchQuery) {
       const q = bankSearchQuery.toLowerCase();
@@ -310,30 +321,8 @@
       container.appendChild(card);
     }
 
-    // Category filter counts
-    renderCategoryFilters();
+    // Update counter
     updateCounter();
-  }
-
-  function renderCategoryFilters() {
-    const container = document.getElementById('category-filters');
-    if (!container) return;
-
-    const allCount = EXAMPLE_BANK.length;
-    let html = `<button class="filter-chip ${currentFilter === 'all' ? 'active' : ''}" data-filter="all">All (${allCount})</button>`;
-
-    const catCounts = {};
-    for (const ex of EXAMPLE_BANK) {
-      catCounts[ex.category] = (catCounts[ex.category] || 0) + 1;
-    }
-
-    for (const [cat, name] of Object.entries(CATEGORIES)) {
-      if (catCounts[cat]) {
-        html += `<button class="filter-chip ${currentFilter === cat ? 'active' : ''}" data-filter="${cat}">${name} (${catCounts[cat]})</button>`;
-      }
-    }
-
-    container.innerHTML = html;
   }
 
   // ── Custom Examples ──────────────────────────────────────
@@ -531,6 +520,28 @@
       const card = document.createElement('div');
       card.className = `result-card ${r.correct ? 'correct' : 'incorrect'}`;
 
+      // Build word influence breakdown
+      let wordBreakdownHtml = '';
+      if (r.wordDetails && r.wordDetails.length > 0) {
+        // Sort words by absolute influence (most impactful first)
+        const sortedWords = [...r.wordDetails].sort((a, b) => Math.abs(b.influence || 0) - Math.abs(a.influence || 0));
+        const wordTags = sortedWords.map(w => {
+          const inf = w.influence || 0;
+          let cls, arrow;
+          if (inf > 0.3) { cls = 'word-strong-pos'; arrow = '↑↑'; }
+          else if (inf > 0) { cls = 'word-pos'; arrow = '↑'; }
+          else if (inf < -0.3) { cls = 'word-strong-neg'; arrow = '↓↓'; }
+          else if (inf < 0) { cls = 'word-neg'; arrow = '↓'; }
+          else { cls = 'word-neutral'; arrow = '·'; }
+          return `<span class="word-chip ${cls}" title="Toward supportive: ${w.scores['positive']?.toFixed(2) || '?'} | Toward harmful: ${w.scores['negative']?.toFixed(2) || '?'} | Net: ${inf >= 0 ? '+' : ''}${inf.toFixed(2)}">${escapeHtml(w.word)} <span class="word-arrow">${arrow}</span></span>`;
+        });
+        wordBreakdownHtml = `
+          <div class="word-breakdown">
+            <div class="word-breakdown-label">Why? Word influence <span class="word-legend"> <span class="word-chip word-pos">↑ supportive</span> <span class="word-chip word-neg">↓ harmful</span></span></div>
+            <div class="word-chips">${wordTags.join(' ')}</div>
+          </div>`;
+      }
+
       card.innerHTML = `
         <p class="result-text">"${escapeHtml(r.text)}"</p>
         <div class="result-labels">
@@ -541,6 +552,7 @@
         <div class="result-confidence">
           <small>Confidence — Supportive: ${(r.confidence['positive'] * 100).toFixed(0)}% · Harmful: ${(r.confidence['negative'] * 100).toFixed(0)}%</small>
         </div>
+        ${wordBreakdownHtml}
         ${r.explanation ? `<p class="result-explanation">💡 ${escapeHtml(r.explanation)}</p>` : ''}
         <span class="difficulty-badge ${r.difficulty}">${r.difficulty}</span>
       `;
@@ -583,13 +595,6 @@
     // Clear label
     if (target.matches('.btn-clear')) {
       delete labeledExamples[target.dataset.id];
-      renderBank();
-      return;
-    }
-
-    // Category filter
-    if (target.matches('.filter-chip')) {
-      currentFilter = target.dataset.filter;
       renderBank();
       return;
     }
