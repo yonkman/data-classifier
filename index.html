@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Who Taught the Machine? — Classroom Tool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     HEADER
+     ═══════════════════════════════════════════════════════════ -->
+<header class="app-header">
+  <h1>🔍 Who Taught the <span>Machine</span>?</h1>
+  <p>Build a classifier. See where it fails. Understand why.</p>
+</header>
+
+<main class="app-container">
+
+<!-- ═══════════════════════════════════════════════════════════
+     STEP 0 — WELCOME
+     ═══════════════════════════════════════════════════════════ -->
+<section id="step-welcome" class="step-panel">
+  <div class="welcome-hero">
+    <div class="emoji-big">🤖</div>
+    <h2>Welcome, Data Curators!</h2>
+    <p>
+      You're about to build a tiny AI model that decides whether a message
+      posted on an LGBTQ+ youth support forum is <strong>supportive</strong>
+      or <strong>harmful</strong>.
+    </p>
+    <p>
+      The catch? <em>Your model is only as fair as the data you give it.</em>
+    </p>
+  </div>
+
+  <div class="welcome-card">
+    <label for="group-name-input">What's your group name?</label>
+    <input type="text" id="group-name-input" placeholder="e.g. The Data Detectives" autofocus>
+  </div>
+
+  <div style="text-align:center; margin-top:1rem">
+    <button class="btn btn-secondary" id="btn-skip-training" style="display:none">
+      ⏩ Skip Training (Test Mode)
+    </button>
+  </div>
+
+  <div class="how-it-works">
+    <div class="how-step">
+      <div class="how-num">1</div>
+      <h3>Label Data</h3>
+      <p>Read example posts and decide: supportive or harmful?</p>
+    </div>
+    <div class="how-step">
+      <div class="how-num">2</div>
+      <h3>Write the Code</h3>
+      <p>Build the classifier yourself in guided coding challenges.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-num">3</div>
+      <h3>Train a Model</h3>
+      <p>Feed your labeled data into the classifier and watch it learn.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-num">4</div>
+      <h3>Test &amp; Reflect</h3>
+      <p>See how your model performs — and where bias crept in.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     STEP 1 — CURATE TRAINING DATA
+     ═══════════════════════════════════════════════════════════ -->
+<section id="step-curate" class="step-panel">
+  <div class="step-header">
+    <span class="step-label">Step 1</span>
+    <h2>Curate Your Training Data</h2>
+    <p>Read each example and label it as <strong style="color:var(--green)">👍 Supportive</strong>
+       or <strong style="color:var(--red)">👎 Harmful</strong>.
+       Aim for at least 20 — but think about <em>quality</em>, not just quantity.</p>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-section">
+    <div class="progress-label">
+      <span class="label-count">0</span> labeled
+      (<span class="pos-count" style="color:var(--green)">0</span> 👍 /
+       <span class="neg-count" style="color:var(--red)">0</span> 👎)
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <span class="progress-label" style="color:var(--text-dim); font-size:.8rem">Goal: 20+</span>
+  </div>
+
+  <!-- Search + Filters -->
+  <div class="curate-toolbar">
+    <input type="search" id="bank-search" placeholder="🔍 Search examples…">
+  </div>
+  <div class="category-filters" id="category-filters"></div>
+
+  <!-- Bank Cards -->
+  <div class="bank-cards" id="bank-cards"></div>
+
+  <!-- Custom Examples -->
+  <div class="custom-section">
+    <h3>✍️ Write Your Own Examples</h3>
+    <p style="font-size:.85rem; color:var(--text-dim); margin-bottom:.75rem">
+      Think of a sentence a real person might write. Label it and add it to your training data.
+    </p>
+    <div class="custom-input-row">
+      <textarea id="custom-text" placeholder="Type a sentence…" rows="1"></textarea>
+      <select id="custom-label">
+        <option value="positive">👍 Supportive</option>
+        <option value="negative">👎 Harmful</option>
+      </select>
+      <button class="btn btn-primary" id="btn-add-custom">Add</button>
+    </div>
+    <div class="custom-list" id="custom-list">
+      <p class="empty-state">No custom examples yet. Write some above!</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     STEP 2 — CODE THE CLASSIFIER
+     ═══════════════════════════════════════════════════════════ -->
+<section id="step-tutorial" class="step-panel">
+  <div class="step-header">
+    <span class="step-label">Step 2</span>
+    <h2>Build the Classifier Yourself</h2>
+    <p>Use the <strong>JavaScript Reference</strong> on the right to write the missing code.
+       Complete each challenge and click <strong>▶ Run &amp; Test</strong> to check your work.</p>
+  </div>
+
+  <div class="tutorial-progress">
+    <span id="tut-progress-text">0 / 3 challenges completed</span>
+    <div class="tut-progress-bar"><div class="tut-progress-fill" id="tut-progress-fill"></div></div>
+  </div>
+
+  <div class="tut-layout">
+    <!-- Left: challenges -->
+    <div class="tut-main" id="tutorial-challenges"></div>
+
+    <!-- Right: reference panel -->
+    <aside class="tut-reference" id="tut-reference">
+      <div class="tut-ref-header">
+        <h3>📖 JavaScript Reference</h3>
+        <p>Key concepts and all the functions you need for the challenges</p>
+      </div>
+
+      <!-- Key Concepts -->
+      <details class="tut-ref-group" open>
+        <summary>Key Concepts</summary>
+
+        <div class="tut-ref-card">
+          <div class="tut-ref-name">Variable</div>
+          <div class="tut-ref-desc">A named container that stores a value. Use <code>let</code> to create one. You can change its value later.</div>
+          <pre class="tut-ref-example"><code>let score = 0;
+score = score + 10;  // now 10
+
+let name = "Ada";
+let fruits = ["apple", "banana"];</code></pre>
+        </div>
+
+        <div class="tut-ref-card">
+          <div class="tut-ref-name">String</div>
+          <div class="tut-ref-desc">A piece of text, wrapped in quotes. Strings have built-in methods like <code>.toLowerCase()</code> and <code>.split()</code>.</div>
+          <pre class="tut-ref-example"><code>let greeting = "Hello World";
+greeting.length        // → 11
+greeting.toLowerCase() // → "hello world"
+greeting.split(" ")    // → ["Hello", "World"]</code></pre>
+        </div>
+
+        <div class="tut-ref-card">
+          <div class="tut-ref-name">Array</div>
+          <div class="tut-ref-desc">An ordered list of values, wrapped in square brackets <code>[]</code>. Each item has a numbered position (starting at 0).</div>
+          <pre class="tut-ref-example"><code>let colors = ["red", "green", "blue"];
+colors[0]         // → "red"
+colors.length     // → 3
+
+// Loop through every item:
+for (let c of colors) {
+  console.log(c);
+}</code></pre>
+        </div>
+
+        <div class="tut-ref-card">
+          <div class="tut-ref-name">Object</div>
+          <div class="tut-ref-desc">A collection of named properties (key-value pairs), wrapped in curly braces <code>{}</code>. Great for grouping related data together.</div>
+          <pre class="tut-ref-example"><code>let student = {
+  name: "Alex",
+  grade: 10,
+  enrolled: true
+};
+student.name      // → "Alex"
+student.grade     // → 10
+student["name"]   // → "Alex" (bracket notation)</code></pre>
+        </div>
+
+        <div class="tut-ref-card">
+          <div class="tut-ref-name">Function</div>
+          <div class="tut-ref-desc">A reusable block of code that does a specific job. You <strong>call</strong> (run) it by writing its name followed by parentheses <code>()</code>. You can pass values in the parentheses for it to work with.</div>
+          <pre class="tut-ref-example"><code>// Calling a built-in function:
+Math.log(10)      // → 2.302…
+console.log("hi") // prints "hi"
+
+// Defining your own function:
+function add(a, b) {
+  return a + b;
+}
+add(3, 5)         // → 8</code></pre>
+        </div>
+
+        <div class="tut-ref-card">
+          <div class="tut-ref-name">Method</div>
+          <div class="tut-ref-desc">A method is just a function that's attached to a value. You call it with a <strong>dot</strong> then the name, then parentheses. Strings, arrays, and objects all come with useful built-in methods.</div>
+          <pre class="tut-ref-example"><code>// String methods:
+"hello".toUpperCase()     // → "HELLO"
+"a b c".split(" ")        // → ["a", "b", "c"]
+
+// Array methods:
+[3, 1, 2].filter(n => n > 1)  // → [3, 2]
+
+// The dot before the name means
+// "call this method on that value"</code></pre>
+        </div>
+
+        <div class="tut-ref-card">
+          <div class="tut-ref-name">Comment</div>
+          <div class="tut-ref-desc">A note in your code that the computer <strong>ignores</strong>. Comments start with <code>//</code> and are just there to help humans understand what the code does.</div>
+          <pre class="tut-ref-example"><code>// This is a comment — it does nothing
+let x = 5;  // you can put them at the end too
+
+// Comments are great for explaining
+// WHY your code does something</code></pre>
+        </div>
+      </details>
+
+      <!-- Strings -->
+      <details class="tut-ref-group" open>
+        <summary>Strings</summary>
+
+        <div class="tut-ref-card">
+          <div class="tut-ref-name"><code>.toLowerCase()</code></div>
+          <div class="tut-ref-desc">Converts a string to all lowercase letters.</div>
+          <pre class="tut-ref-example"><code>"Hello World".toLowerCase()
+// → "hello world"</code></pre>
+        </div>
+
+        <div class="tut-ref-card">
+          <div class="tut-ref-name"><code>.replace(pattern, replacement)</code></div>
+          <div class="tut-ref-desc">Replaces parts of a string that match a pattern. Use <code>/g</code> at the end to replace <em>all</em> matches.</div>
+          <pre class="tut-ref-example"><code>"a!b?c".replace(/[!?]/g, " ")
+// → "a b c"
+
+// Remove everything except letters,
+// numbers, apostrophes, spaces, hyphens:
+"Hi!! I'm fine.".replace(/[^a-z0-9'\s-]/g, " ")
+// → "Hi   I'm fine "</code></pre>
+        </div>
+
+        <div class="tut-ref-card">
+          <div class="tut-ref-name"><code>.split(separator)</code></div>
+          <div class="tut-ref-desc">Splits a string into an array. Use <code>/\s+/</code> to split on one or more spaces.</div>
+          <pre class="tut-ref-example"><code>"hello world".split(" ")
+// → ["hello", "world"]
+
+"a  b   c".split(/\s+/)
+// → ["a", "b", "c"]</code></pre>
+        </div>
+      </details>
+
+      <!-- Arrays -->
+      <details class="tut-ref-group" open>
+        <summary>Arrays</summary>
+
+        <div class="tut-ref-card">
+          <div class="tut-ref-name"><code>.filter(fn)</code></div>
+          <div class="tut-ref-desc">Returns a new array keeping only items where the function returns <code>true</code>.</div>
+          <pre class="tut-ref-example"><code>[1, 2, 3, 4].filter(n => n > 2)
+// → [3, 4]
+
+["a", "hi", "b"].filter(w => w.length > 1)
+// → ["hi"]</code></pre>
+        </div>
+
+        <div class="tut-ref-card">
+          <div class="tut-ref-name"><code>for...of</code> loop</div>
+          <div class="tut-ref-desc">Loops through each item in an array.</div>
+          <pre class="tut-ref-example"><code>let fruits = ["apple", "banana"];
+for (let fruit of fruits) {
+  console.log(fruit);
+}
+// prints: "apple", then "banana"</code></pre>
+        </div>
+      </details>
+
+      <!-- Objects -->
+      <details class="tut-ref-group" open>
+        <summary>Objects</summary>
+
+        <div class="tut-ref-card">
+          <div class="tut-ref-name">Reading &amp; writing properties</div>
+          <div class="tut-ref-desc">Access object values with dot or bracket notation.</div>
+          <pre class="tut-ref-example"><code>let obj = { count: 0, name: "test" };
+obj.count          // → 0
+obj.count++        // now obj.count is 1
+obj.count = obj.count + 5  // now 6
+
+// Bracket notation (for variable keys):
+let key = "name";
+obj[key]           // → "test"</code></pre>
+        </div>
+
+        <div class="tut-ref-card">
+          <div class="tut-ref-name"><code>|| 0</code> — default to zero</div>
+          <div class="tut-ref-desc">If a property doesn't exist yet, <code>obj[key]</code> returns <code>undefined</code>. Use <code>|| 0</code> to treat it as 0.</div>
+          <pre class="tut-ref-example"><code>let counts = {};
+counts["hello"]            // → undefined
+counts["hello"] || 0       // → 0
+
+// Counting pattern:
+counts["hello"] = (counts["hello"] || 0) + 1;
+// now counts["hello"] is 1</code></pre>
+        </div>
+
+        <div class="tut-ref-card">
+          <div class="tut-ref-name"><code>Object.entries(obj)</code></div>
+          <div class="tut-ref-desc">Returns an array of <code>[key, value]</code> pairs. Useful for looping through all properties.</div>
+          <pre class="tut-ref-example"><code>let scores = { positive: 5, negative: 3 };
+for (let [label, value] of Object.entries(scores)) {
+  console.log(label, value);
+}
+// prints: "positive" 5, then "negative" 3</code></pre>
+        </div>
+      </details>
+
+      <!-- Math -->
+      <details class="tut-ref-group" open>
+        <summary>Math</summary>
+
+        <div class="tut-ref-card">
+          <div class="tut-ref-name"><code>Math.log(x)</code></div>
+          <div class="tut-ref-desc">Natural logarithm. Used in Naive Bayes to prevent very small numbers from underflowing.</div>
+          <pre class="tut-ref-example"><code>Math.log(1)    // → 0
+Math.log(0.5)  // → -0.693...
+Math.log(2)    // → 0.693...
+
+// Key property: log(a * b) = log(a) + log(b)
+// So we ADD log-probabilities instead
+// of multiplying tiny probabilities</code></pre>
+        </div>
+
+        <div class="tut-ref-card">
+          <div class="tut-ref-name"><code>-Infinity</code></div>
+          <div class="tut-ref-desc">The smallest possible number. Useful as a starting value when looking for the maximum.</div>
+          <pre class="tut-ref-example"><code>let best = -Infinity;
+if (5 > best) { best = 5; }   // best is now 5
+if (3 > best) { }             // 3 < 5, no change
+if (9 > best) { best = 9; }   // best is now 9</code></pre>
+        </div>
+      </details>
+
+      <!-- Comparisons -->
+      <details class="tut-ref-group">
+        <summary>Comparisons &amp; If Statements</summary>
+
+        <div class="tut-ref-card">
+          <div class="tut-ref-name"><code>if</code> statement</div>
+          <div class="tut-ref-desc">Runs code only when a condition is true.</div>
+          <pre class="tut-ref-example"><code>let score = 10;
+if (score > 5) {
+  console.log("high score!");
+}
+// prints: "high score!"
+
+// Comparison operators:
+// >  greater than
+// <  less than
+// >= greater or equal
+// === exactly equal</code></pre>
+        </div>
+      </details>
+
+    </aside>
+  </div>
+
+  <div class="tutorial-complete-banner" id="tutorial-complete-banner" style="display:none">
+    <div class="complete-emoji">🎉</div>
+    <h3>All Challenges Complete!</h3>
+    <p>Your hand-written code will power the classifier. Click <strong>Next</strong> to train it on your labeled data.</p>
+  </div>
+
+  <div style="text-align:center; margin-top:1rem">
+    <button class="btn btn-secondary" id="btn-skip-tutorial" style="font-size:.85rem">
+      Skip — use pre-built classifier instead
+    </button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     STEP 3 — TRAIN
+     ═══════════════════════════════════════════════════════════ -->
+<section id="step-train" class="step-panel">
+  <div class="step-header">
+    <span class="step-label">Step 3</span>
+    <h2>Train Your Model</h2>
+    <p>Your labeled data will be used to train a <strong>Naive Bayes text classifier</strong> — a simple
+       algorithm that learns which words are associated with each label.</p>
+  </div>
+
+  <div class="train-summary">
+    <div class="stat-box">
+      <div class="stat-num" id="train-total">0</div>
+      <div class="stat-label">Total Examples</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="train-positive">0</div>
+      <div class="stat-label">👍 Supportive</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="train-negative">0</div>
+      <div class="stat-label">👎 Harmful</div>
+    </div>
+  </div>
+
+  <div class="balance-warning" id="balance-warning" style="display:none"></div>
+
+  <div class="train-actions">
+    <button class="btn btn-success" id="btn-train" style="font-size:1rem; padding:.7rem 1.8rem">
+      🚀 Train Model
+    </button>
+    <button class="btn btn-primary" id="btn-test" disabled style="font-size:1rem; padding:.7rem 1.8rem">
+      📊 Test Against Challenge Set →
+    </button>
+  </div>
+
+  <div id="train-output"></div>
+
+  <!-- Try-it-out sandbox -->
+  <div id="try-it-section">
+    <h3>🧪 Try It Out</h3>
+    <p style="font-size:.85rem; color:var(--text-dim); margin-bottom:.75rem">
+      Type any sentence and see how your model classifies it.
+    </p>
+    <div class="try-input-row">
+      <input type="text" id="try-input" placeholder="Type a sentence to classify…">
+      <button class="btn btn-primary" id="btn-try">Classify</button>
+    </div>
+    <div id="try-output"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     STEP 3 — HOW IT WORKS
+     ═══════════════════════════════════════════════════════════ -->
+<section id="step-explainer" class="step-panel">
+  <div class="step-header">
+    <span class="step-label">Deep Dive</span>
+    <h2>How Does This Actually Work?</h2>
+    <p>You just trained a <strong>Naive Bayes classifier</strong>. But how is that different from
+       the AI chatbots you may have used? Let's break it down.</p>
+  </div>
+
+  <!-- ── Your Classifier ── -->
+  <div class="explainer-section">
+    <div class="explainer-icon">📊</div>
+    <div class="explainer-content">
+      <h3>Your Model: Naive Bayes Classifier</h3>
+      <p class="explainer-subtitle">A simple word-counting algorithm</p>
+
+      <div class="explainer-steps">
+        <div class="explainer-step">
+          <div class="step-num">1</div>
+          <div>
+            <strong>Count words per label.</strong> During training it looks at every word in your
+            labeled examples and counts how often each word appears in "supportive" vs. "harmful" posts.
+          </div>
+        </div>
+        <div class="explainer-step">
+          <div class="step-num">2</div>
+          <div>
+            <strong>Calculate probabilities.</strong> For a new sentence, it asks: given each word in
+            this sentence, what's the probability it belongs to each category? It multiplies those
+            probabilities together (that's the "naive" part — it assumes words are independent).
+          </div>
+        </div>
+        <div class="explainer-step">
+          <div class="step-num">3</div>
+          <div>
+            <strong>Pick the winner.</strong> Whichever label has the higher combined probability wins.
+          </div>
+        </div>
+      </div>
+
+      <div class="explainer-example">
+        <div class="explainer-example-label">Example</div>
+        <p>If your training data has the word <code>proud</code> appearing 8 times in supportive posts
+        and 0 times in harmful posts, then seeing "proud" in a new sentence pushes the model
+        strongly toward <strong style="color:var(--green)">supportive</strong>.</p>
+        <p style="margin-top:.4rem">But it has <em>no understanding</em> of what "proud" means. It's just counting.</p>
+      </div>
+
+      <div class="trait-chips">
+        <span class="trait-chip">🔢 Counts words</span>
+        <span class="trait-chip">⚡ Instant training</span>
+        <span class="trait-chip">📏 Needs 20–100 examples</span>
+        <span class="trait-chip">🚫 No context awareness</span>
+        <span class="trait-chip">🎯 Two categories only</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LLMs ── -->
+  <div class="explainer-section">
+    <div class="explainer-icon">🧠</div>
+    <div class="explainer-content">
+      <h3>Large Language Models (LLMs)</h3>
+      <p class="explainer-subtitle">ChatGPT, Claude, Gemini, etc.</p>
+
+      <div class="explainer-steps">
+        <div class="explainer-step">
+          <div class="step-num">1</div>
+          <div>
+            <strong>Pre-trained on the internet.</strong> LLMs are trained on billions of pages of text
+            — books, websites, forums, Wikipedia, code, social media. This takes weeks on thousands of
+            specialized chips and costs millions of dollars.
+          </div>
+        </div>
+        <div class="explainer-step">
+          <div class="step-num">2</div>
+          <div>
+            <strong>Learn patterns, not just word counts.</strong> They use neural networks with
+            billions of parameters to learn relationships between words, grammar, tone, sarcasm,
+            and even world knowledge. They process words <em>in context</em> — the meaning of "sick"
+            in "that's sick!" vs. "I'm feeling sick" is different, and an LLM can often tell.
+          </div>
+        </div>
+        <div class="explainer-step">
+          <div class="step-num">3</div>
+          <div>
+            <strong>Fine-tuned with human feedback.</strong> After pre-training, humans rate the model's
+            outputs to teach it to be helpful, harmless, and honest. This is called RLHF
+            (Reinforcement Learning from Human Feedback).
+          </div>
+        </div>
+      </div>
+
+      <div class="trait-chips">
+        <span class="trait-chip">🧠 Understands context</span>
+        <span class="trait-chip">🐢 Months to train</span>
+        <span class="trait-chip">📚 Billions of examples</span>
+        <span class="trait-chip">💰 Millions of $$$</span>
+        <span class="trait-chip">🗣️ Generates text</span>
+        <span class="trait-chip">🎭 Can detect sarcasm (sometimes)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Comparison Table ── -->
+  <div class="compare-table-wrapper">
+    <h3>Side-by-Side Comparison</h3>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>📊 Your Naive Bayes</th>
+          <th>🧠 Large Language Model</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="row-label">How it learns</td>
+          <td>Counts word frequencies per label</td>
+          <td>Learns deep patterns from billions of sentences</td>
+        </tr>
+        <tr>
+          <td class="row-label">Training data</td>
+          <td>20–100 examples <em>you</em> labeled</td>
+          <td>Billions of web pages, books, etc.</td>
+        </tr>
+        <tr>
+          <td class="row-label">Training time</td>
+          <td>Milliseconds, in your browser</td>
+          <td>Weeks–months on thousands of GPUs</td>
+        </tr>
+        <tr>
+          <td class="row-label">Understands context?</td>
+          <td>❌ No — treats each word independently</td>
+          <td>✅ Yes — considers word order, tone, meaning</td>
+        </tr>
+        <tr>
+          <td class="row-label">Handles sarcasm?</td>
+          <td>❌ Very poorly</td>
+          <td>⚠️ Sometimes, but not reliably</td>
+        </tr>
+        <tr>
+          <td class="row-label">Handles reclaimed language?</td>
+          <td>❌ Can't tell context of use</td>
+          <td>⚠️ Better, but still makes mistakes</td>
+        </tr>
+        <tr>
+          <td class="row-label">Bias risk</td>
+          <td>Directly reflects <em>your</em> labeling choices</td>
+          <td>Reflects biases in internet-scale training data</td>
+        </tr>
+        <tr>
+          <td class="row-label">Can you inspect why?</td>
+          <td>✅ Yes — you can see the word counts</td>
+          <td>❌ Mostly a black box</td>
+        </tr>
+        <tr>
+          <td class="row-label">Cost</td>
+          <td>Free, runs in a browser</td>
+          <td>$10M–$100M+ to train from scratch</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Key Insight ── -->
+  <div class="insight-box">
+    <h3>🔑 The Key Insight</h3>
+    <p>
+      Your tiny classifier and a massive LLM are more alike than you think.
+      <strong>Both learn from data humans provided.</strong> Both inherit the biases
+      in that data. The difference is scale — and the fact that with your small model,
+      you can <em>see exactly</em> where the bias comes from.
+    </p>
+    <p style="margin-top:.5rem">
+      When an LLM makes a biased decision, it's much harder to trace <em>why</em> —
+      the bias is buried in billions of parameters trained on data nobody fully audited.
+      That's what makes the problem so hard at scale.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     STEP 4 — RESULTS
+     ═══════════════════════════════════════════════════════════ -->
+<section id="step-results" class="step-panel">
+  <div class="step-header">
+    <span class="step-label">Step 4</span>
+    <h2>Results: <span class="group-name-display"></span></h2>
+    <p>Here's how your model performed on 20 sentences it has never seen before — including
+       sarcasm, reclaimed language, and reports of harm.</p>
+  </div>
+
+  <div class="results-header">
+    <div class="score-circle">
+      <svg viewBox="0 0 100 100">
+        <circle class="score-ring-bg" r="38" cx="50" cy="50" pathLength="100"/>
+        <circle id="score-ring-fill" r="38" cx="50" cy="50" pathLength="100"/>
+      </svg>
+      <div class="score-text">
+        <span class="score-pct" id="score-pct">—</span>
+        <span class="score-fraction" id="score-value">–/–</span>
+      </div>
+    </div>
+
+    <div class="results-summary">
+      <h3>Accuracy Breakdown</h3>
+      <div class="difficulty-scores">
+        <div class="diff-pill">Easy: <span id="easy-score">–</span></div>
+        <div class="diff-pill">Medium: <span id="medium-score">–</span></div>
+        <div class="diff-pill">Hard: <span id="hard-score">–</span></div>
+      </div>
+      <p style="color:var(--text-dim); font-size:.85rem; margin-top:.5rem">
+        Most models struggle with the hard cases. That's the point — the edge cases
+        are where data quality matters most.
+      </p>
+    </div>
+  </div>
+
+  <div class="result-cards" id="result-cards"></div>
+
+  <div class="discussion-box">
+    <h3>💬 Discussion Questions</h3>
+    <ul>
+      <li>Which sentences did your model get wrong? What patterns do you notice?</li>
+      <li>Did sarcastic or ironic sentences trip up your model? Why?</li>
+      <li>How did your model handle posts where someone was <em>reporting</em> harm (not causing it)?</li>
+      <li>If two groups labeled the same sentence differently, who was "right"? Is there always a right answer?</li>
+      <li>What would you do differently if you could re-label your training data?</li>
+      <li>Real content moderation systems make these decisions millions of times a day. What could go wrong?</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════
+     BOTTOM NAV
+     ═══════════════════════════════════════════════════════════ -->
+<nav class="bottom-nav">
+  <button class="btn btn-secondary" id="btn-prev" disabled>← Back</button>
+  <div class="nav-dots">
+    <button class="nav-dot active" data-step="0" title="Welcome"></button>
+    <button class="nav-dot" data-step="1" title="Curate"></button>
+    <button class="nav-dot" data-step="2" title="Code"></button>
+    <button class="nav-dot" data-step="3" title="Train"></button>
+    <button class="nav-dot" data-step="4" title="How It Works"></button>
+    <button class="nav-dot" data-step="5" title="Results"></button>
+  </div>
+  <button class="btn btn-primary" id="btn-next">Next →</button>
+</nav>
+
+<!-- Scripts -->
+<script src="data.js"></script>
+<script src="classifier.js"></script>
+<script src="tutorial.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
