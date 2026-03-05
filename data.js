@@ -80,7 +80,7 @@ const EXAMPLE_BANK = [
   { id: 63, text: "I started watching Our Flag Means Death for the pirates and stayed for the queer love story.", category: "pop-culture" },
   { id: 64, text: "The Wicked movie soundtrack has been my entire personality since November 2024.", category: "pop-culture" },
   { id: 65, text: "Troye Sivan, Renée Rapp, and Muna are my holy trinity and I will not be debating this.", category: "pop-culture" },
-  { id: 66, text: "I've watched every single Young Royals episode in one weekend and I'm not okay.", category: "pop-culture" },
+  { id: 66, text: "She didn't just enter the room — she made the room wish it had dressed better.", category: "dramatic-flair" },
   { id: 67, text: "She-Ra's ending made me realize things about myself that I was NOT ready for.", category: "pop-culture" },
   { id: 68, text: "Schitt's Creek taught me more about love and acceptance than any class ever could.", category: "pop-culture" },
   { id: 69, text: "I watched Heated Rivalry and now I can't watch hockey without imagining enemies-to-lovers tension.", category: "pop-culture" },

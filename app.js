@@ -62,7 +62,7 @@
     nextBtn.style.display = idx === steps.length - 1 ? 'none' : '';
     nextBtn.textContent = 'Next →';
 
-    if (idx === 1) renderBank();
+    if (idx === 1) { renderBank(); updateCounter(); }
     if (idx === 2) renderTutorial();
     if (idx === 3) renderTrainStep();
     if (idx === 4) {
@@ -136,13 +136,25 @@
     document.querySelectorAll('.pos-count').forEach(el => el.textContent = posCount);
     document.querySelectorAll('.neg-count').forEach(el => el.textContent = negCount);
 
-    // Progress bar
-    const pct = Math.min(100, Math.round((count / 20) * 100));
+    // Progress bar — fills toward total bank + custom count
+    const totalStatements = EXAMPLE_BANK.length + customExamples.length;
+    const pct = totalStatements ? Math.min(100, Math.round((count / totalStatements) * 100)) : 0;
     const bar = document.getElementById('progress-fill');
     if (bar) {
       bar.style.width = pct + '%';
       bar.setAttribute('data-count', count);
+      // Yellow once minimum (20) reached, green when ALL classified
+      if (count >= totalStatements) {
+        bar.style.background = 'var(--success, #22c55e)';
+      } else if (count >= 20) {
+        bar.style.background = 'var(--warning, #eab308)';
+      } else {
+        bar.style.background = 'var(--accent)';
+      }
     }
+    // Update the goal label to reflect total
+    const goalLabel = document.querySelector('.progress-section .progress-label[style]');
+    if (goalLabel) goalLabel.textContent = `${count} / ${totalStatements}`;
   }
 
   // ── Tutorial Rendering ───────────────────────────────────
