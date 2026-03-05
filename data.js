@@ -25,8 +25,8 @@ const EXAMPLE_BANK = [
   { id: 16, text: "The vibes today are immaculate and I will not let anyone ruin them.", category: "obviously-iconic" },
   { id: 17, text: "I have strong opinions about Doc Martens lacing patterns and I'm not afraid to share them.", category: "obviously-iconic" },
   { id: 18, text: "Cottagecore lesbian energy: I crocheted a frog and gave it to my crush.", category: "obviously-iconic" },
-  { id: 19, text: "I don't walk into rooms, I make entrances.", category: "obviously-iconic" },
-  { id: 20, text: "Just choreographed a full dance routine to HOT TO GO in my bedroom and it SLAPS.", category: "obviously-iconic" },
+  { id: 19, text: "Just choreographed a full dance routine to HOT TO GO in my bedroom and it SLAPS.", category: "obviously-iconic" },
+  { id: 20, text: "My crush is garlic bread and a good book on a Friday night and honestly? Living my best ace life.", category: "obviously-iconic" },
 
   // ───── OBVIOUSLY BASIC ─────
   { id: 21, text: "Gonna do some homework and then probably go to bed.", category: "obviously-basic" },
