@@ -26,7 +26,7 @@ const EXAMPLE_BANK = [
   { id: 17, text: "I have strong opinions about Doc Martens lacing patterns and I'm not afraid to share them.", category: "obviously-iconic" },
   { id: 18, text: "Cottagecore lesbian energy: I crocheted a frog and gave it to my crush.", category: "obviously-iconic" },
   { id: 19, text: "I don't walk into rooms, I make entrances.", category: "obviously-iconic" },
-  { id: 20, text: "Just choreographed a dance routine to Chappell Roan in my bedroom and it SLAPS.", category: "obviously-iconic" },
+  { id: 20, text: "Just choreographed a full dance routine to HOT TO GO in my bedroom and it SLAPS.", category: "obviously-iconic" },
 
   // ───── OBVIOUSLY BASIC ─────
   { id: 21, text: "Gonna do some homework and then probably go to bed.", category: "obviously-basic" },
@@ -64,25 +64,25 @@ const EXAMPLE_BANK = [
 
   // ───── SNEAKY BASIC (sounds fun but is actually basic) ─────
   { id: 51, text: "I'm training for a 5K and tracking my splits on Strava.", category: "sneaky-basic", note: "Running stats? Respect, but that's basic energy." },
-  { id: 52, text: "Just discovered a new productivity app and I'm reorganizing my entire life.", category: "sneaky-basic", note: "Productivity app enthusiasm is peak basic." },
+  { id: 52, text: "I watched a 40-minute video about how to load a dishwasher more efficiently.", category: "sneaky-basic", note: "Dishwasher optimization content is impressively basic." },
   { id: 53, text: "Our fantasy hockey league draft is this weekend.", category: "sneaky-basic", note: "Fantasy sports are the basics' natural habitat." },
   { id: 54, text: "I just learned how to make my own protein bars from a YouTube video.", category: "sneaky-basic", note: "DIY protein bars. Incredibly basic." },
   { id: 55, text: "I'm trying to hit 10K steps every day and I bought a pedometer for it.", category: "sneaky-basic", note: "Step-count discourse is certified basic." },
-  { id: 56, text: "Spent Saturday organizing my locker with colour-coded folders.", category: "sneaky-basic", note: "Colour-coded folders in a locker is practical-basic energy." },
+  { id: 56, text: "I compared the prices of three different brands of paper towel before picking one.", category: "sneaky-basic", note: "Paper towel price comparison is deeply, profoundly basic." },
   { id: 57, text: "I'm really into chess right now. Watching GM streams every night.", category: "sneaky-basic", note: "Chess Twitch culture is wonderfully basic." },
-  { id: 58, text: "I just optimized my study schedule with a colour-coded spreadsheet.", category: "sneaky-basic", note: "Spreadsheet optimization: a pillar of basic culture." },
+  { id: 58, text: "I spent my whole lunch break explaining the offside rule to someone who didn't ask.", category: "sneaky-basic", note: "Unsolicited sports rules explanations are textbook basic." },
   { id: 59, text: "I'm doing a no-spend month challenge I found on Reddit.", category: "sneaky-basic", note: "Reddit personal finance challenges are extremely basic." },
-  { id: 60, text: "I alphabetized my spice rack and it was oddly satisfying.", category: "sneaky-basic", note: "Spice rack organization could go either way, but alphabetical is basic." },
+  { id: 60, text: "I set three alarms 5 minutes apart so I won't oversleep and I'm proud of that system.", category: "sneaky-basic", note: "A triple-alarm system described with pride is pure basic energy." },
 
   // ───── POP CULTURE REFERENCES (2024-2026 relevant) ─────
-  { id: 61, text: "Chappell Roan at the VMAs was a religious experience and I will not be taking questions.", category: "pop-culture" },
+  { id: 61, text: "The way I screamed when Lil Nas X did the pole dance at the awards show — a religious experience.", category: "pop-culture" },
   { id: 62, text: "Legally Blonde is a documentary about a woman achieving her dreams.", category: "pop-culture" },
-  { id: 63, text: "I've watched Bottoms four times now and every time I notice a new unhinged detail.", category: "pop-culture" },
+  { id: 63, text: "I started watching Our Flag Means Death for the pirates and stayed for the queer love story.", category: "pop-culture" },
   { id: 64, text: "The Wicked movie soundtrack has been my entire personality since November 2024.", category: "pop-culture" },
-  { id: 65, text: "Lil Nas X, Troye Sivan, Renée Rapp, Muna — that's my Mount Rushmore.", category: "pop-culture" },
+  { id: 65, text: "Troye Sivan, Renée Rapp, and Muna are my holy trinity and I will not be debating this.", category: "pop-culture" },
   { id: 66, text: "I've watched every single Young Royals episode in one weekend and I'm not okay.", category: "pop-culture" },
-  { id: 67, text: "Red, White & Royal Blue was a movie about diplomacy and nobody can convince me otherwise.", category: "pop-culture" },
-  { id: 68, text: "I've listened to 'HOT TO GO!' exactly 1,000 times and each time I do the choreography.", category: "pop-culture" },
+  { id: 67, text: "She-Ra's ending made me realize things about myself that I was NOT ready for.", category: "pop-culture" },
+  { id: 68, text: "Schitt's Creek taught me more about love and acceptance than any class ever could.", category: "pop-culture" },
   { id: 69, text: "I watched Heated Rivalry and now I can't watch hockey without imagining enemies-to-lovers tension.", category: "pop-culture" },
   { id: 70, text: "The Owl House finale made me feel things I was NOT prepared to feel.", category: "pop-culture" },
 
@@ -139,7 +139,7 @@ const TEST_SET = [
   { text: "I picked up some stuff from the store and went home.", expected: "basic", explanation: "Just a regular errand, no flair detected.", difficulty: "easy" },
   { text: "I've assigned each of my succulents a zodiac sign and a gender identity.", expected: "iconic", explanation: "Astrology + plant parenthood + identity play? Iconic behaviour.", difficulty: "medium" },
   { text: "Does anyone know when the math homework is due?", expected: "basic", explanation: "Homework logistics are deeply basic energy.", difficulty: "easy" },
-  { text: "I watched the Nimona movie and ugly-cried for two hours straight.", expected: "iconic", explanation: "Queer animated film + dramatic emotional response = certified iconic.", difficulty: "medium" },
+  { text: "I sobbed through the entire last season of Heartstopper and I'd do it again.", expected: "iconic", explanation: "Deep emotional investment in a beloved queer show = iconic.", difficulty: "medium" },
   { text: "Did some laundry and watched a random YouTube video.", expected: "basic", explanation: "Laundry + algorithm surfing = basic formula.", difficulty: "easy" },
   { text: "I curated a seven-course themed dinner party for my cat's birthday.", expected: "iconic", explanation: "A THEMED dinner? For a CAT? Extremely iconic.", difficulty: "medium" },
   { text: "I organized my tax receipts into colour-coded folders and I feel powerful.", expected: "iconic", explanation: "The COLOUR CODING and the word 'powerful' push this into iconic territory.", difficulty: "hard" },

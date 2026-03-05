@@ -38,7 +38,7 @@
   };
 
   // ── Navigation ───────────────────────────────────────────
-  const steps = ['step-welcome', 'step-curate', 'step-tutorial', 'step-train', 'step-explainer', 'step-results'];
+  const steps = ['step-welcome', 'step-curate', 'step-tutorial', 'step-train', 'step-results', 'step-explainer'];
   const tutorialEngine = new TutorialEngine();
   let useTutorialClassifier = false;  // true if student completed all challenges
   let currentStep = 0;
@@ -48,6 +48,9 @@
     steps.forEach((id, i) => {
       document.getElementById(id).classList.toggle('active', i === idx);
     });
+
+    // Widen container for tutorial step, shrink for others
+    document.querySelector('.app-container').classList.toggle('wide-for-tutorial', idx === 2);
     // Update nav dots
     document.querySelectorAll('.nav-dot').forEach((dot, i) => {
       dot.classList.toggle('active', i === idx);
@@ -55,17 +58,29 @@
     });
     // Update nav buttons
     document.getElementById('btn-prev').disabled = idx === 0;
-    document.getElementById('btn-next').textContent = idx === steps.length - 1 ? 'Done' : 'Next →';
+    const nextBtn = document.getElementById('btn-next');
+    nextBtn.style.display = idx === steps.length - 1 ? 'none' : '';
+    nextBtn.textContent = 'Next →';
 
     if (idx === 1) renderBank();
     if (idx === 2) renderTutorial();
     if (idx === 3) renderTrainStep();
-    if (idx === 5) renderResults();
+    if (idx === 4) {
+      // Auto-run test when entering results step
+      if (classifier && !testResults) {
+        testResults = classifier.evaluate(TEST_SET);
+      }
+      renderResults();
+    }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function nextStep() {
+  function nextStep(skipCheck) {
+    if (currentStep === 2 && !skipCheck && !tutorialEngine.allComplete()) {
+      alert('Please complete all tutorial challenges before continuing, or click "Skip Tutorial" to move on.');
+      return;
+    }
     if (currentStep === 0) {
       const input = document.getElementById('group-name-input');
       groupName = input.value.trim() || 'Team ' + Math.floor(Math.random() * 100);
@@ -132,6 +147,8 @@
 
   // ── Tutorial Rendering ───────────────────────────────────
   let tutorialRendered = false;
+  let currentTier = 'easy';
+  const savedTierCode = {};  // { tier: { challengeId: code } }
 
   function renderTutorial() {
     if (tutorialRendered) {
@@ -139,7 +156,11 @@
       return;
     }
     tutorialRendered = true;
+    renderTutorialChallenges();
+    updateTutorialProgress();
+  }
 
+  function renderTutorialChallenges() {
     const container = document.getElementById('tutorial-challenges');
     if (!container) return;
 
@@ -165,10 +186,14 @@
             <span class="tut-editor-label">📝 Your Code</span>
             <button class="btn btn-secondary tut-btn-hint" data-challenge="${challenge.id}">💡 Hint</button>
             <button class="btn btn-secondary tut-btn-solution" data-challenge="${challenge.id}">👀 Show Solution</button>
+            <button class="btn btn-secondary tut-btn-reset" data-challenge="${challenge.id}" title="Reset to starter code">🔄 Reset</button>
           </div>
-          <textarea class="tut-editor" id="tut-editor-${challenge.id}"
-                    spellcheck="false" autocomplete="off" autocorrect="off"
-                    autocapitalize="off">${challenge.starterCode}</textarea>
+          <div class="tut-editor-container">
+            <div class="tut-line-numbers" id="tut-lines-${challenge.id}"></div>
+            <textarea class="tut-editor" id="tut-editor-${challenge.id}"
+                      spellcheck="false" autocomplete="off" autocorrect="off"
+                      autocapitalize="off">${challenge.starterCode}</textarea>
+          </div>
         </div>
         <div class="tut-actions">
           <button class="btn btn-success tut-btn-run" data-challenge="${challenge.id}">▶ Run &amp; Test</button>
@@ -180,6 +205,73 @@
       container.appendChild(div);
     }
 
+    // Initialise line numbers for every editor
+    for (const challenge of TUTORIAL_CHALLENGES) {
+      const editor = document.getElementById(`tut-editor-${challenge.id}`);
+      const gutter = document.getElementById(`tut-lines-${challenge.id}`);
+      if (editor && gutter) {
+        syncLineNumbers(editor, gutter);
+        editor.addEventListener('input', () => syncLineNumbers(editor, gutter));
+        editor.addEventListener('scroll', () => { gutter.scrollTop = editor.scrollTop; });
+      }
+    }
+  }
+
+  /** Update the line-number gutter to match the textarea content */
+  function syncLineNumbers(editor, gutter) {
+    const lineCount = editor.value.split('\n').length;
+    const nums = [];
+    for (let i = 1; i <= lineCount; i++) nums.push(i);
+    gutter.textContent = nums.join('\n');
+  }
+
+  /** Save whatever the student typed in the current tier's editors */
+  function saveTierCode() {
+    if (!tutorialRendered) return;
+    const snapshot = {};
+    for (const challenge of TUTORIAL_CHALLENGES) {
+      const editor = document.getElementById(`tut-editor-${challenge.id}`);
+      if (editor) snapshot[challenge.id] = editor.value;
+    }
+    savedTierCode[currentTier] = snapshot;
+  }
+
+  /** Restore previously-saved code into the current tier's editors */
+  function restoreTierCode(tier) {
+    const snapshot = savedTierCode[tier];
+    if (!snapshot) return;
+    for (const challenge of TUTORIAL_CHALLENGES) {
+      const editor = document.getElementById(`tut-editor-${challenge.id}`);
+      const gutter = document.getElementById(`tut-lines-${challenge.id}`);
+      if (editor && snapshot[challenge.id] !== undefined) {
+        editor.value = snapshot[challenge.id];
+        if (gutter) syncLineNumbers(editor, gutter);
+      }
+    }
+  }
+
+  function switchTier(tier) {
+    if (tier === currentTier && tutorialRendered) return;
+
+    // Save code from the tier we're leaving
+    saveTierCode();
+
+    currentTier = tier;
+
+    // Update active tier card
+    document.querySelectorAll('.tier-card').forEach(card => {
+      card.classList.toggle('active', card.dataset.tier === tier);
+    });
+
+    // Switch the underlying data
+    setTutorialTier(tier);
+
+    // Reset the engine
+    tutorialEngine.reset();
+
+    // Re-render challenges then restore any saved code
+    renderTutorialChallenges();
+    restoreTierCode(tier);
     updateTutorialProgress();
   }
 
@@ -217,8 +309,19 @@
     let html = '';
 
     if (result.error) {
+      // Try to extract a line number from the error stack
+      let lineInfo = '';
+      if (result.stack) {
+        // new Function() body: line numbers in stack traces like <anonymous>:LINE:COL
+        const m = result.stack.match(/<anonymous>:(\d+):(\d+)/);
+        if (m) {
+          const errLine = parseInt(m[1], 10);
+          const errCol  = parseInt(m[2], 10);
+          lineInfo = ` <span class="tut-error-line">(line ${errLine}, col ${errCol})</span>`;
+        }
+      }
       html += `<div class="tut-error">
-        <div class="tut-error-header">❌ Error</div>
+        <div class="tut-error-header">❌ Error${lineInfo}</div>
         <pre class="tut-error-msg">${escapeHtml(result.error)}</pre>
       </div>`;
     }
@@ -269,6 +372,24 @@
 
     if (!confirm('Are you sure? Try the hints first! This will replace your code with the solution.')) return;
     editor.value = challenge.solution;
+    // Re-sync line numbers after loading solution
+    const gutter = document.getElementById(`tut-lines-${challengeId}`);
+    if (gutter) syncLineNumbers(editor, gutter);
+  }
+
+  function resetTutorialEditor(challengeId) {
+    const challenge = TUTORIAL_CHALLENGES.find(c => c.id === challengeId);
+    const editor = document.getElementById(`tut-editor-${challengeId}`);
+    if (!challenge || !editor) return;
+
+    if (!confirm('Reset to starter code? This will erase everything you\'ve typed for this challenge.')) return;
+    editor.value = challenge.starterCode;
+    // Re-sync line numbers after reset
+    const gutter = document.getElementById(`tut-lines-${challengeId}`);
+    if (gutter) syncLineNumbers(editor, gutter);
+    // Clear any previous output
+    const output = document.getElementById(`tut-output-${challengeId}`);
+    if (output) output.innerHTML = '';
   }
 
   // ── Bank Rendering ───────────────────────────────────────
@@ -356,6 +477,133 @@
     `).join('');
   }
 
+  // ── Student Classifier (uses hand-written tutorial code) ──
+  function getStudentFunction(challengeId) {
+    const names = { tokenize: 'tokenize', train: 'trainOnExample', predict: 'predictLabel' };
+    const editor = document.getElementById(`tut-editor-${challengeId}`);
+    if (!editor) return null;
+    try {
+      return new Function(editor.value + `\nreturn ${names[challengeId]};`)();
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /**
+   * A classifier that wraps the student's hand-written tokenize,
+   * trainOnExample, and predictLabel functions so they conform to
+   * the same interface the rest of the app expects.
+   */
+  class StudentClassifier {
+    constructor(tokenizeFn, trainFn, predictFn) {
+      this._tokenize = tokenizeFn;
+      this._trainFn = trainFn;
+      this._predictFn = predictFn;
+      this.classes = {};
+      this.vocabulary = new Set();
+      this.totalDocs = 0;
+    }
+
+    tokenize(text) {
+      return this._tokenize(text);
+    }
+
+    train(examples) {
+      this.classes = {};
+      this.vocabulary = new Set();
+      this.totalDocs = 0;
+
+      // Initialize classes
+      const labels = [...new Set(examples.map(e => e.label))];
+      for (const l of labels) {
+        this.classes[l] = { wordCounts: {}, docCount: 0, totalWords: 0 };
+      }
+
+      for (const { text, label } of examples) {
+        this._trainFn(this.classes, label, text, this._tokenize);
+        this.totalDocs++;
+        // Track vocabulary
+        for (const word of this._tokenize(text)) {
+          this.vocabulary.add(word);
+        }
+      }
+    }
+
+    predict(text) {
+      const label = this._predictFn(
+        this.classes, text, this.totalDocs, this.vocabulary.size, this._tokenize
+      );
+
+      // Compute scores & confidence (mirrors NaiveBayesClassifier)
+      const tokens = this._tokenize(text);
+      const vocabSize = this.vocabulary.size;
+      const scores = {};
+      for (const [cn, cls] of Object.entries(this.classes)) {
+        let logProb = Math.log(cls.docCount / this.totalDocs);
+        for (const word of tokens) {
+          const wc = cls.wordCounts[word] || 0;
+          logProb += Math.log((wc + 1) / (cls.totalWords + vocabSize));
+        }
+        scores[cn] = logProb;
+      }
+      const classNames = Object.keys(scores);
+      const maxScore = Math.max(...Object.values(scores));
+      const expScores = classNames.map(c => Math.exp(scores[c] - maxScore));
+      const sumExp = expScores.reduce((a, b) => a + b, 0);
+      const confidence = {};
+      classNames.forEach((c, i) => { confidence[c] = expScores[i] / sumExp; });
+
+      return { label, confidence, scores };
+    }
+
+    predictWithDetails(text) {
+      const tokens = this._tokenize(text);
+      const vocabSize = this.vocabulary.size;
+
+      const wordDetails = tokens.map(word => {
+        const entry = { word, scores: {} };
+        for (const [cn, cls] of Object.entries(this.classes)) {
+          const wc = cls.wordCounts[word] || 0;
+          entry.scores[cn] = Math.log((wc + 1) / (cls.totalWords + vocabSize));
+        }
+        if (entry.scores['iconic'] !== undefined && entry.scores['basic'] !== undefined) {
+          entry.influence = entry.scores['iconic'] - entry.scores['basic'];
+        }
+        return entry;
+      });
+
+      const prediction = this.predict(text);
+      return { ...prediction, wordDetails };
+    }
+
+    evaluate(testSet) {
+      const results = testSet.map(item => {
+        const prediction = this.predictWithDetails(item.text);
+        return {
+          text: item.text,
+          expected: item.expected,
+          predicted: prediction.label,
+          confidence: prediction.confidence,
+          correct: prediction.label === item.expected,
+          explanation: item.explanation || '',
+          difficulty: item.difficulty || 'medium',
+          wordDetails: prediction.wordDetails,
+        };
+      });
+      const correct = results.filter(r => r.correct).length;
+      const accuracy = results.length > 0 ? correct / results.length : 0;
+      return { results, accuracy, correct, total: results.length };
+    }
+
+    getStats() {
+      const stats = { totalDocs: this.totalDocs, vocabSize: this.vocabulary.size, classes: {} };
+      for (const [cn, cls] of Object.entries(this.classes)) {
+        stats.classes[cn] = { docCount: cls.docCount, uniqueWords: Object.keys(cls.wordCounts).length };
+      }
+      return stats;
+    }
+  }
+
   // ── Train Step ───────────────────────────────────────────
   function renderTrainStep() {
     const data = getAllTrainingData();
@@ -384,7 +632,6 @@
 
     // Reset results
     document.getElementById('train-output').style.display = 'none';
-    document.getElementById('btn-test').disabled = true;
   }
 
   function trainModel() {
@@ -408,15 +655,31 @@
     btn.textContent = '⏳ Training...';
 
     setTimeout(() => {
-      classifier = new NaiveBayesClassifier();
+      // Use student-written code if they completed the tutorial
+      if (useTutorialClassifier) {
+        const tokenizeFn = getStudentFunction('tokenize');
+        const trainFn    = getStudentFunction('train');
+        const predictFn  = getStudentFunction('predict');
+
+        if (tokenizeFn && trainFn && predictFn) {
+          classifier = new StudentClassifier(tokenizeFn, trainFn, predictFn);
+        } else {
+          // Fallback if editors are unavailable
+          classifier = new NaiveBayesClassifier();
+        }
+      } else {
+        classifier = new NaiveBayesClassifier();
+      }
       classifier.train(data);
 
       const stats = classifier.getStats();
 
       output.style.display = 'block';
+      const usingStudent = useTutorialClassifier && classifier instanceof StudentClassifier;
       output.innerHTML = `
         <div class="train-stats">
           <h3>✅ Model Trained!</h3>
+          ${usingStudent ? '<p style="color:var(--green); font-weight:600; margin-bottom:.5rem">🧑‍💻 Using YOUR hand-written classifier code!</p>' : ''}
           <div class="stat-grid">
             <div class="stat-card">
               <div class="stat-value">${stats.totalDocs}</div>
@@ -440,7 +703,6 @@
 
       btn.disabled = false;
       btn.textContent = '🔄 Retrain Model';
-      document.getElementById('btn-test').disabled = false;
 
       // Also enable the try-it-out area
       document.getElementById('try-it-section').style.display = 'block';
@@ -484,7 +746,7 @@
   function runTest() {
     if (!classifier) return;
     testResults = classifier.evaluate(TEST_SET);
-    showStep(5);
+    showStep(4);
   }
 
   function renderResults() {
@@ -612,8 +874,7 @@
     // Train
     if (target.id === 'btn-train' || target.closest('#btn-train')) { trainModel(); return; }
 
-    // Test
-    if (target.id === 'btn-test' || target.closest('#btn-test')) { runTest(); return; }
+
 
     // Try prediction
     if (target.id === 'btn-try' || target.closest('#btn-try')) { tryPredict(); return; }
@@ -637,9 +898,14 @@
       showTutorialSolution(btn.dataset.challenge);
       return;
     }
+    if (target.matches('.tut-btn-reset') || target.closest('.tut-btn-reset')) {
+      const btn = target.closest('.tut-btn-reset') || target;
+      resetTutorialEditor(btn.dataset.challenge);
+      return;
+    }
     if (target.id === 'btn-skip-tutorial' || target.closest('#btn-skip-tutorial')) {
       useTutorialClassifier = false;
-      nextStep();
+      nextStep(true);
       return;
     }
 
@@ -647,6 +913,13 @@
     if (target.matches('.nav-dot')) {
       const idx = parseInt(target.dataset.step);
       if (idx <= currentStep) showStep(idx);
+    }
+
+    // Tier selector
+    if (target.matches('.tier-card') || target.closest('.tier-card')) {
+      const card = target.closest('.tier-card') || target;
+      const tier = card.dataset.tier;
+      if (tier) switchTier(tier);
     }
   });
 
@@ -704,7 +977,7 @@
     classifier = new NaiveBayesClassifier();
     classifier.train(getAllTrainingData());
     testResults = classifier.evaluate(TEST_SET);
-    showStep(5);
+    showStep(4);
   }
 
   // ── Init ─────────────────────────────────────────────────

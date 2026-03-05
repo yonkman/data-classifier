@@ -132,8 +132,30 @@
   <div class="step-header">
     <span class="step-label">Step 2</span>
     <h2>Build the Classifier Yourself</h2>
-    <p>Use the <strong>JavaScript Reference</strong> on the right to write the missing code.
+    <p>Choose a difficulty level, then use the <strong>JavaScript Reference</strong> on the right to write the missing code.
        Complete each challenge and click <strong>▶ Run &amp; Test</strong> to check your work.</p>
+  </div>
+
+  <!-- Tier Selector -->
+  <div class="tier-selector" id="tier-selector">
+    <div class="tier-selector-label">Choose your difficulty:</div>
+    <div class="tier-cards">
+      <button class="tier-card active" data-tier="easy">
+        <span class="tier-icon">🌱</span>
+        <span class="tier-name">Easy</span>
+        <span class="tier-desc">Guided step-by-step — fill in 1–2 lines at a time</span>
+      </button>
+      <button class="tier-card" data-tier="medium">
+        <span class="tier-icon">🌿</span>
+        <span class="tier-name">Medium</span>
+        <span class="tier-desc">Less hand-holding — you write more code</span>
+      </button>
+      <button class="tier-card" data-tier="hard">
+        <span class="tier-icon">🌳</span>
+        <span class="tier-name">Hard</span>
+        <span class="tier-desc">Just the spec — implement everything yourself</span>
+      </button>
+    </div>
   </div>
 
   <div class="tutorial-progress">
@@ -237,6 +259,34 @@ let x = 5;  // you can put them at the end too
 
 // Comments are great for explaining
 // WHY your code does something</code></pre>
+        </div>
+
+        <div class="tut-ref-card">
+          <div class="tut-ref-name">Regex (Regular Expression)</div>
+          <div class="tut-ref-desc">A <strong>pattern</strong> for matching text, written between forward slashes <code>/like this/</code>. Think of it as a search-and-match template — instead of looking for an exact word, you describe a <em>shape</em> of text you want to find.</div>
+          <pre class="tut-ref-example"><code>// A simple regex matches literal text:
+/hello/           // matches "hello"
+
+// Square brackets [ ] = "any ONE of these"
+/[abc]/           // matches "a", "b", or "c"
+/[0-9]/           // matches any digit
+/[^abc]/          // matches anything EXCEPT a, b, c
+
+// Special shortcuts:
+//   \s = any whitespace (space, tab, newline)
+//   \s+ = one or more whitespace characters
+//   g  = "global" — find ALL matches, not just first
+
+// Common patterns used in our challenges:
+/[^a-z0-9'\s-]/g
+// ↑ Matches any character that is NOT:
+//   a-z (lowercase letter), 0-9 (digit),
+//   ' (apostrophe), \s (space), - (hyphen)
+// The g means "replace ALL of them"
+
+/\s+/
+// ↑ Matches one or more spaces in a row
+// Great for splitting text into words</code></pre>
         </div>
       </details>
 
@@ -433,9 +483,6 @@ if (score > 5) {
   <div class="train-actions">
     <button class="btn btn-success" id="btn-train" style="font-size:1rem; padding:.7rem 1.8rem">
       🚀 Train Model
-    </button>
-    <button class="btn btn-primary" id="btn-test" disabled style="font-size:1rem; padding:.7rem 1.8rem">
-      📊 Test Against Challenge Set →
     </button>
   </div>
 
@@ -637,7 +684,18 @@ if (score > 5) {
       Your model is small enough to inspect — that’s what makes it useful for learning.
     </p>
   </div>
-</section>
+  <!-- ── Discussion Questions ── -->
+  <div class="discussion-box">
+    <h3>💬 Discussion Questions</h3>
+    <ul>
+      <li>Which sentences did your model get wrong? What patterns do you notice?</li>
+      <li>Is "iconic" actually a real, objective thing — or is it totally subjective? Can an AI ever get it "right"?</li>
+      <li>Did dramatic flair or pop culture references confuse your model?</li>
+      <li>If two groups labeled the same sentence differently, who was "right"? Is there always a right answer?</li>
+      <li>What would you do differently if you could re-label your training data?</li>
+      <li>Real AI systems classify millions of posts as "offensive" or "safe" every day. How is that similar to what you just did?</li>
+    </ul>
+  </div></section>
 
 <!-- ═══════════════════════════════════════════════════════════
      STEP 4 — RESULTS
@@ -678,17 +736,7 @@ if (score > 5) {
 
   <div class="result-cards" id="result-cards"></div>
 
-  <div class="discussion-box">
-    <h3>💬 Discussion Questions</h3>
-    <ul>
-      <li>Which sentences did your model get wrong? What patterns do you notice?</li>
-      <li>Is “iconic” actually a real, objective thing — or is it totally subjective? Can an AI ever get it “right”?</li>
-      <li>Did dramatic flair or pop culture references confuse your model?</li>
-      <li>If two groups labeled the same sentence differently, who was “right”? Is there always a right answer?</li>
-      <li>What would you do differently if you could re-label your training data?</li>
-      <li>Real AI systems classify millions of posts as “offensive” or “safe” every day. How is that similar to what you just did?</li>
-    </ul>
-  </div>
+
 </section>
 
 </main>
@@ -703,8 +751,8 @@ if (score > 5) {
     <button class="nav-dot" data-step="1" title="Curate"></button>
     <button class="nav-dot" data-step="2" title="Code"></button>
     <button class="nav-dot" data-step="3" title="Train"></button>
-    <button class="nav-dot" data-step="4" title="How It Works"></button>
-    <button class="nav-dot" data-step="5" title="Results"></button>
+    <button class="nav-dot" data-step="4" title="Results"></button>
+    <button class="nav-dot" data-step="5" title="Deep Dive"></button>
   </div>
   <button class="btn btn-primary" id="btn-next">Next →</button>
 </nav>
